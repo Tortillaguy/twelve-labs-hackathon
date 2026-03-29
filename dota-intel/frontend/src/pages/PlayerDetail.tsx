@@ -99,6 +99,7 @@ interface Highlight {
   thumbnail_url?: string
   hls_url?: string
   transcription?: string
+  ai_insight?: string
 }
 
 interface SearchClip {
@@ -636,6 +637,14 @@ function HighlightCard({ highlight, onPlay }: { highlight: Highlight; onPlay?: (
             {highlight.play_type}
           </span>
         </div>
+        {highlight.ai_insight && (
+          <div className="flex items-start gap-1.5 bg-[#1A0A33]/60 border border-[#3D2475]/50 rounded px-2 py-1.5">
+            <Sparkles size={10} className="text-accent-ai mt-0.5 flex-shrink-0" />
+            <span className="text-[10px] italic text-accent-ai/90 leading-tight line-clamp-2">
+              {highlight.ai_insight}
+            </span>
+          </div>
+        )}
         <div className="text-xs font-semibold text-[#E8E8F0] leading-tight">
           {highlight.description}
         </div>

@@ -69,6 +69,7 @@ def discover_event_anchored(
             player_name=extracted_name or player_name,
             match_id=match_id,
             opponent=opponent,
+            ai_insight=analysis.get("ai_insight"),
         ))
     return highlights
 
@@ -164,6 +165,7 @@ def discover_discovery_first(
             thumbnail_url=clip.get("thumbnail_url"),
             match_id=match_id,
             opponent=opponent,
+            ai_insight=analysis.get("ai_insight"),
         ))
     return highlights
 

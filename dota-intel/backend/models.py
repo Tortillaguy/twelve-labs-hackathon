@@ -47,6 +47,7 @@ class Highlight(BaseModel):
     match_id: Optional[int] = None
     opponent: Optional[str] = None
     thumbnail_url: Optional[str] = None
+    ai_insight: Optional[str] = None
 
 class RankedPlayer(BaseModel):
     rank: int

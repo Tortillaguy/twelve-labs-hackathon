@@ -36,7 +36,8 @@
       "description": "Yatoro God on the Anti-Mage with an incredible high-ground defense RAMPAGE!",
       "player_name": "Yatoro",
       "match_id": 8748176080,
-      "opponent": "Team Zero"
+      "opponent": "Team Zero",
+      "ai_insight": "Yatoro turns a 1v4 high-ground defense into a full RAMPAGE, single-handedly swinging the game's momentum."
     },
     {
       "video_id": "69c8c0587dd6415dd5bb5ccf",
@@ -47,7 +48,8 @@
       "description": "Perfect Chronosphere catch by Yatoro turns the teamfight completely in Spirit's favor.",
       "player_name": "Yatoro",
       "match_id": 8748080084,
-      "opponent": "Xtreme Gaming"
+      "opponent": "Xtreme Gaming",
+      "ai_insight": "A precisely-timed Chronosphere traps three heroes, converting a losing skirmish into a decisive team wipe."
     }
   ]
 }

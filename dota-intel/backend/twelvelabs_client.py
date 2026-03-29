@@ -271,7 +271,9 @@ class TwelveLabsClient:
             f"'killing spree', 'dominating', 'mega kill', 'ultra kill', 'rampage', "
             f"'godlike', 'beyond godlike', 'wicked sick' — or null if none), "
             f"description (one sentence focusing on what {target_player or 'the player'} did), "
-            f"player_name (the player name spoken by casters or shown in an in-game banner, or null)."
+            f"player_name (the player name spoken by casters or shown in an in-game banner, or null), "
+            f"ai_insight (one sentence: why this moment matters strategically or emotionally "
+            f"in a Dota 2 broadcast — vivid, specific, max 20 words; null if unclear)."
         )
         try:
             r = httpx.post(
@@ -289,8 +291,8 @@ class TwelveLabsClient:
             if "{" in full_text and "}" in full_text:
                 json_part = full_text[full_text.find("{"):full_text.rfind("}")+1]
                 return json.loads(json_part)
-            return {"description": full_text.strip(), "play_type": "TEAMFIGHT", "excitement_score": 7.0}
+            return {"description": full_text.strip(), "play_type": "TEAMFIGHT", "excitement_score": 7.0, "ai_insight": None}
         except Exception as e:
             print(f"[tl] Warning in analyze_clip: {e}")
-            return {"description": "Highlight moment", "play_type": "TEAMFIGHT", "excitement_score": 5.0}
+            return {"description": "Highlight moment", "play_type": "TEAMFIGHT", "excitement_score": 5.0, "ai_insight": None}
 
