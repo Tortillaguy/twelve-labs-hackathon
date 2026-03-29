@@ -10,17 +10,5 @@
     "hls_url": "https://deuqpmn4rs7j5.cloudfront.net/69c3656d3b47276b0994370f/69c8c0587dd6415dd5bb5ccf/stream/playlist.m3u8",
     "thumbnail_url": "https://deuqpmn4rs7j5.cloudfront.net/69c3656d3b47276b0994370f/69c8c0587dd6415dd5bb5ccf/image/representative_thumbnail.jpeg",
     "cached_at": 1774777250.648153
-  },
-  "69c8a3349639891c461300b9": {
-    "video_id": "69c8a3349639891c461300b9",
-    "hls_url": "https://deuqpmn4rs7j5.cloudfront.net/69c3656d3b47276b0994370f/69c8a3349639891c461300b9/stream/playlist.m3u8",
-    "thumbnail_url": "https://deuqpmn4rs7j5.cloudfront.net/69c3656d3b47276b0994370f/69c8a3349639891c461300b9/image/representative_thumbnail.jpeg",
-    "cached_at": 1774777250.648265
-  },
-  "69c88d43c704e7c92b858da7": {
-    "video_id": "69c88d43c704e7c92b858da7",
-    "hls_url": "https://deuqpmn4rs7j5.cloudfront.net/69c3656d3b47276b0994370f/69c88d43c704e7c92b858da7/stream/playlist.m3u8",
-    "thumbnail_url": "https://deuqpmn4rs7j5.cloudfront.net/69c3656d3b47276b0994370f/69c88d43c704e7c92b858da7/image/representative_thumbnail.jpeg",
-    "cached_at": 1774777250.6483572
   }
 }

@@ -1,0 +1,60 @@
+{
+  "videos": [
+    {
+      "video_id": "69c9607529480c273b9b42f9",
+      "filename": "match_8748176080.mp4",
+      "hls_url": "https://deuqpmn4rs7j5.cloudfront.net/69c3656d3b47276b0994370f/69c9607529480c273b9b42f9/stream/playlist.m3u8",
+      "thumbnail_url": "https://deuqpmn4rs7j5.cloudfront.net/69c3656d3b47276b0994370f/69c9607529480c273b9b42f9/image/representative_thumbnail.jpeg",
+      "user_metadata": {
+        "duration_secs": 2037,
+        "first_blood_time": 286,
+        "league": "ESL One Birmingham 2026",
+        "match_id": 8748176000,
+        "radiant_win": true,
+        "top_player_summary": "NothingToSay 11/2/14, \u5ff5\u5934\u901a\u8fbe 5/0/12, lavie 5/5/15"
+      }
+    },
+    {
+      "video_id": "69c95db229480c273b9b41b3",
+      "filename": "match_8747822091.mp4",
+      "hls_url": "https://deuqpmn4rs7j5.cloudfront.net/69c3656d3b47276b0994370f/69c95db229480c273b9b41b3/stream/playlist.m3u8",
+      "thumbnail_url": "https://deuqpmn4rs7j5.cloudfront.net/69c3656d3b47276b0994370f/69c95db229480c273b9b41b3/image/representative_thumbnail.jpeg",
+      "user_metadata": {
+        "duration_secs": 1501,
+        "first_blood_time": 203,
+        "league": "ESL One Birmingham 2026",
+        "match_id": 8747822000,
+        "radiant_win": false,
+        "top_player_summary": "\u0448\u0430\u043f\u0438\u0440\u0430- 10/1/9, Preacher Man 9/0/7, CHIRA_JUNIOR 3/3/2"
+      }
+    },
+    {
+      "video_id": "69c8ef099c56608a837a146b",
+      "filename": "match_8748008577.mp4",
+      "hls_url": "https://deuqpmn4rs7j5.cloudfront.net/69c3656d3b47276b0994370f/69c8ef099c56608a837a146b/stream/playlist.m3u8",
+      "thumbnail_url": "https://deuqpmn4rs7j5.cloudfront.net/69c3656d3b47276b0994370f/69c8ef099c56608a837a146b/image/representative_thumbnail.jpeg",
+      "user_metadata": {
+        "duration_secs": 1333,
+        "first_blood_time": 177,
+        "league": "ESL One Birmingham 2026",
+        "match_id": 8748008000,
+        "radiant_win": true,
+        "top_player_summary": "destroy 9/0/3, Have fun 5/0/11, Nah, I'd adapt 3/0/10"
+      }
+    },
+    {
+      "video_id": "69c8c0587dd6415dd5bb5ccf",
+      "filename": "match_8748080084.mp4",
+      "hls_url": "https://deuqpmn4rs7j5.cloudfront.net/69c3656d3b47276b0994370f/69c8c0587dd6415dd5bb5ccf/stream/playlist.m3u8",
+      "thumbnail_url": "https://deuqpmn4rs7j5.cloudfront.net/69c3656d3b47276b0994370f/69c8c0587dd6415dd5bb5ccf/image/representative_thumbnail.jpeg",
+      "user_metadata": {
+        "duration_secs": 2869,
+        "first_blood_time": 30,
+        "league": "ESL One Birmingham 2026",
+        "match_id": 8748080000,
+        "radiant_win": true,
+        "top_player_summary": "Have fun 10/4/13, \u5ff5\u5934\u901a\u8fbe 8/0/9, NothingToSay 7/4/12"
+      }
+    }
+  ]
+}

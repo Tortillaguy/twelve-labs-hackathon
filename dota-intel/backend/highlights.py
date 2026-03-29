@@ -110,22 +110,22 @@ def discover_discovery_first(
         (
             f'"{player_name} is on a killing spree" OR "{player_name} is dominating" '
             f'OR "{player_name} rampage" kill streak banner Dota 2 announcement{hero_context}',
-            ["visual", "audio", "transcription"],
-            6,
+            ["visual", "audio"],
+            3,
         ),
         # Signal 2: excited caster positive mention
         (
             f"caster commentator shoutout {player_name} amazing incredible insane "
             f"Dota 2 broadcast excited crowd focus: {player_name}{hero_context}",
-            ["audio", "transcription"],
-            6,
+            ["audio"],
+            3,
         ),
         # Signal 3: kill streak visual — player specific
         (
             f'Dota 2 {streak_labels} kill streak "{player_name}"{hero_context} red screen flash '
             f'multi kill rampage animation kill feed',
             ["visual", "audio"],
-            6,
+            3,
         ),
     ]
 

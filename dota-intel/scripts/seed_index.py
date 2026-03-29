@@ -394,22 +394,7 @@ def stage_highlights():
             
             hero_name = get_hero_name(p_in_match.hero_id)
 
-            # Strategy A: event-anchored (kill events from OpenDota)
-            event_clips = discover_event_anchored(
-                kills_log=kills,
-                video_id=video_id,
-                game_start_offset=horn_offset,
-                player_account_id=p_in_match.player_slot,
-                player_name=info["name"],
-                tl_client=tl,
-                match_id=int(mid_str),
-                opponent=opponent,
-                hero_name=hero_name,
-            )
-
-            print(f"  [A] event-anchored: {len(event_clips)} clips")
-
-            # Strategy B: discovery-first (caster mention + kill streak + in-game banners)
+            # Discovery-first only (skip event-anchored to avoid per-kill Pegasus calls)
             discovery_clips = discover_discovery_first(
                 index_id=tl.index_id,
                 video_id=video_id,
@@ -420,9 +405,9 @@ def stage_highlights():
                 hero_name=hero_name,
             )
 
-            print(f"  [B] discovery-first: {len(discovery_clips)} clips")
+            print(f"  discovery-first: {len(discovery_clips)} clips")
 
-            merged = merge_and_deduplicate(event_clips + discovery_clips)
+            merged = merge_and_deduplicate(discovery_clips)
             print(f"  → merged + deduped: {len(merged)} highlights")
 
             if aid_str not in raw_highlights:
@@ -432,7 +417,7 @@ def stage_highlights():
         # Save after each video so a crash mid-loop doesn't lose work
         _save_json(PLAYER_HIGHLIGHTS_PATH, raw_highlights)
 
-    print(f"\n[highlights] Complete.")
+    print(f"\n[highlights] Complete. Rate limit hits during this run: {tl.rate_limit_hits}")
 
 
 def stage_prebake():

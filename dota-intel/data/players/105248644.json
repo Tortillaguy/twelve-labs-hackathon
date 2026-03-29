@@ -10,7 +10,11 @@
     "win_rate": 0.67,
     "ai_impact_score": 47.3,
     "highlight_count": 2,
-    "top_heroes": [30, 64, 50],
+    "top_heroes": [
+      30,
+      64,
+      50
+    ],
     "avatar_url": null
   },
   "recent_matches": [
@@ -51,30 +55,5 @@
       "clip_count": 0
     }
   ],
-  "highlights": [
-    {
-      "video_id": "69c88d43c704e7c92b858da7",
-      "start": 930.0,
-      "end": 937.0,
-      "play_type": "CLUTCH",
-      "excitement_score": 8.0,
-      "description": "Miposhka with the clutch Maledict on Ame just before dying — the tick damage finishes the Faceless Void seconds later!",
-      "player_name": "Miposhka",
-      "match_id": 8748176080,
-      "opponent": "Xtreme Gaming",
-      "thumbnail_url": null
-    },
-    {
-      "video_id": "69c8a3349639891c461300b9",
-      "start": 555.0,
-      "end": 562.0,
-      "play_type": "TEAMFIGHT",
-      "excitement_score": 7.5,
-      "description": "Jakiro Ice Path stuns the entire OG frontline! Dual Breath into Macropyre — the zone control is immaculate from Miposhka.",
-      "player_name": "Miposhka",
-      "match_id": 8747660830,
-      "opponent": "OG",
-      "thumbnail_url": null
-    }
-  ]
+  "highlights": []
 }

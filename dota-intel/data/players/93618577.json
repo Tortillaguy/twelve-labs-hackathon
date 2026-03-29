@@ -1,24 +1,37 @@
 {
   "player": {
-    "rank": 1,
+    "rank": 3,
     "account_id": 93618577,
     "name": "malr1ne",
     "team": "Team Falcons",
-    "kda": "11 / 0 / 16",
-    "avg_kda_ratio": 27.0,
-    "avg_gpm": 706.0,
+    "kda": "10 / 0 / 12",
+    "avg_kda_ratio": 46.0,
+    "avg_gpm": 668.5,
     "win_rate": 1.0,
-    "ai_impact_score": 91.7,
-    "highlight_count": 3,
+    "ai_impact_score": 84.2,
+    "highlight_count": 1,
     "top_heroes": [
+      120,
       106
     ],
     "avatar_url": "https://avatars.steamstatic.com/b19df011bbc2c18e4bc8a47cb82c0467726e8e1d_full.jpg"
   },
   "recent_matches": [
     {
+      "match_id": 8747822091,
+      "opponent": "Unknown",
+      "won": true,
+      "duration_str": "25:01",
+      "kills": 10,
+      "deaths": 1,
+      "assists": 9,
+      "gpm": 631,
+      "hero_id": 120,
+      "clip_count": 1
+    },
+    {
       "match_id": 8747660830,
-      "opponent": "Enemy Team",
+      "opponent": "Unknown",
       "won": true,
       "duration_str": "44:08",
       "kills": 11,
@@ -26,45 +39,24 @@
       "assists": 16,
       "gpm": 706,
       "hero_id": 106,
-      "clip_count": 3
+      "clip_count": 0
     }
   ],
   "highlights": [
     {
-      "video_id": "69c8a3349639891c461300b9",
-      "start": 1059.0,
-      "end": 1066.0,
-      "play_type": "TEAMFIGHT",
-      "excitement_score": 7.0,
-      "description": "to ensure that this relocate is going to be that much of a threat they're still able to kill the tusk maybe kill the egg as well no white walk gets it off just the",
+      "video_id": "69c95db229480c273b9b41b3",
+      "start": 873.0,
+      "end": 880.0,
+      "play_type": "RAMPAGE",
+      "excitement_score": 10.0,
+      "description": "Malr1ne (Pangolier) executes a relentless assault, securing multiple consecutive kills with precise skill usage and aggressive positioning during a pivotal teamfight.",
       "player_name": "malr1ne",
-      "match_id": 8747660830,
-      "opponent": "Enemy Team",
-      "thumbnail_url": null
-    },
-    {
-      "video_id": "69c8a3349639891c461300b9",
-      "start": 2348.5,
-      "end": 2355.75,
-      "play_type": "TEAMFIGHT",
-      "excitement_score": 7.0,
-      "description": "through with 33, keeping everybody healthy, everybody happy, and everybody cooking damage out. Vyandex are going to fall",
-      "player_name": "malr1ne",
-      "match_id": 8747660830,
-      "opponent": "Enemy Team",
-      "thumbnail_url": null
-    },
-    {
-      "video_id": "69c8a3349639891c461300b9",
-      "start": 2421.0,
-      "end": 2427.5,
-      "play_type": "TEAMFIGHT",
-      "excitement_score": 7.0,
-      "description": "Watson that he will finish Daedalus right before he dies there. You just don't have it for that fight. No surprise, Tundra",
-      "player_name": "malr1ne",
-      "match_id": 8747660830,
-      "opponent": "Enemy Team",
-      "thumbnail_url": null
+      "match_id": 8747822091,
+      "opponent": null,
+      "hls_url": null,
+      "thumbnail_url": null,
+      "ai_insight": "This moment defines dominance, turning the tide with unmatched aggression that electrifies the crowd and shifts momentum irreversibly.",
+      "surfaced_delta_seconds": 28
     }
   ]
 }

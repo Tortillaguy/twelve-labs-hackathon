@@ -55,6 +55,7 @@ class TwelveLabsClient:
             raise ValueError("TWELVELABS_API_KEY not found in environment.")
         self._client = TwelveLabs(api_key=self._api_key)
         self.index_id = index_id or os.environ.get("TWELVELABS_INDEX_ID", "")
+        self.rate_limit_hits = 0
 
     def get_video_info(self, video_id: str) -> dict:
         """Return HLS stream URL and thumbnail for a video."""
@@ -175,7 +176,7 @@ class TwelveLabsClient:
                     f"{self.BASE_URL}/search",
                     headers={"x-api-key": self._api_key},
                     files=fields,
-                    timeout=30,
+                    timeout=120,
                 )
                 r.raise_for_status()
                 data = r.json().get("data", [])
@@ -194,10 +195,19 @@ class TwelveLabsClient:
             except httpx.HTTPStatusError as e:
                 if e.response.status_code == 429 and i < retries - 1:
                     wait_time = 30 * (i + 1)
-                    print(f"[tl-search] 429 Rate Limited. Waiting {wait_time}s... (attempt {i+1}/{retries})")
+                    self.rate_limit_hits += 1
+                    print(f"[tl-search] 429 RATE LIMITED (total hits: {self.rate_limit_hits}). Waiting {wait_time}s... (attempt {i+1}/{retries})")
                     time.sleep(wait_time)
                 else:
-                    print(f"[tl-search] All retries failed for query '{query}'. Returning empty list.")
+                    print(f"[tl-search] HTTP {e.response.status_code} for query '{query[:60]}...'. Returning empty list.")
+                    return []
+            except (httpx.ReadTimeout, httpx.ConnectTimeout) as e:
+                if i < retries - 1:
+                    wait_time = 15 * (i + 1)
+                    print(f"[tl-search] TIMEOUT (attempt {i+1}/{retries}). Retrying in {wait_time}s...")
+                    time.sleep(wait_time)
+                else:
+                    print(f"[tl-search] TIMEOUT after {retries} attempts for query '{query[:60]}...'. Returning empty list.")
                     return []
         return []
 
@@ -267,7 +277,8 @@ class TwelveLabsClient:
             except httpx.HTTPStatusError as e:
                 if e.response.status_code == 429 and i < retries - 1:
                     wait_time = 30 * (i + 1)
-                    print(f"[tl-summarize] 429 Rate Limited. Waiting {wait_time}s... (attempt {i+1}/{retries})")
+                    self.rate_limit_hits += 1
+                    print(f"[tl-summarize] 429 RATE LIMITED (total hits: {self.rate_limit_hits}). Waiting {wait_time}s... (attempt {i+1}/{retries})")
                     time.sleep(wait_time)
                 else:
                     print(f"[tl-summarize] Warning: {e}")
@@ -332,7 +343,8 @@ class TwelveLabsClient:
             except httpx.HTTPStatusError as e:
                 if e.response.status_code == 429 and i < retries - 1:
                     wait_time = 30 * (i + 1)
-                    print(f"[tl-analyze] 429 Rate Limited. Waiting {wait_time}s... (attempt {i+1}/{retries})")
+                    self.rate_limit_hits += 1
+                    print(f"[tl-analyze] 429 RATE LIMITED (total hits: {self.rate_limit_hits}). Waiting {wait_time}s... (attempt {i+1}/{retries})")
                     time.sleep(wait_time)
                 else:
                     print(f"[tl] Warning in analyze_clip: {e}")

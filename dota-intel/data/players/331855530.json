@@ -1,24 +1,37 @@
 {
   "player": {
-    "rank": 1,
+    "rank": 2,
     "account_id": 331855530,
     "name": "Pure~",
     "team": "Tundra Esports",
-    "kda": "16 / 0 / 11",
-    "avg_kda_ratio": 27.0,
-    "avg_gpm": 829.0,
+    "kda": "12 / 0 / 9",
+    "avg_kda_ratio": 43.0,
+    "avg_gpm": 769.5,
     "win_rate": 1.0,
-    "ai_impact_score": 94.0,
-    "highlight_count": 3,
+    "ai_impact_score": 86.7,
+    "highlight_count": 1,
     "top_heroes": [
+      72,
       49
     ],
     "avatar_url": "https://avatars.steamstatic.com/ecf7db47b7c4d7232a3451e6e051b7e6bd0e30e1_full.jpg"
   },
   "recent_matches": [
     {
+      "match_id": 8747822091,
+      "opponent": "Unknown",
+      "won": true,
+      "duration_str": "25:01",
+      "kills": 9,
+      "deaths": 0,
+      "assists": 7,
+      "gpm": 710,
+      "hero_id": 72,
+      "clip_count": 1
+    },
+    {
       "match_id": 8747660830,
-      "opponent": "Enemy Team",
+      "opponent": "Unknown",
       "won": true,
       "duration_str": "44:08",
       "kills": 16,
@@ -26,45 +39,24 @@
       "assists": 11,
       "gpm": 829,
       "hero_id": 49,
-      "clip_count": 3
+      "clip_count": 0
     }
   ],
   "highlights": [
     {
-      "video_id": "69c8a3349639891c461300b9",
-      "start": 1059.0,
-      "end": 1066.0,
-      "play_type": "TEAMFIGHT",
-      "excitement_score": 7.0,
-      "description": "to ensure that this relocate is going to be that much of a threat they're still able to kill the tusk maybe kill the egg as well no white walk gets it off just the",
+      "video_id": "69c95db229480c273b9b41b3",
+      "start": 893.75,
+      "end": 900.75,
+      "play_type": "RAMPAGE",
+      "excitement_score": 10.0,
+      "description": "Pure~'s Gyrocopter secures a decisive kill during a chaotic teamfight, showcasing exceptional positioning and timing to eliminate a key enemy hero.",
       "player_name": "Pure~",
-      "match_id": 8747660830,
-      "opponent": "Enemy Team",
-      "thumbnail_url": null
-    },
-    {
-      "video_id": "69c8a3349639891c461300b9",
-      "start": 2348.5,
-      "end": 2355.75,
-      "play_type": "TEAMFIGHT",
-      "excitement_score": 7.0,
-      "description": "through with 33, keeping everybody healthy, everybody happy, and everybody cooking damage out. Vyandex are going to fall",
-      "player_name": "Pure~",
-      "match_id": 8747660830,
-      "opponent": "Enemy Team",
-      "thumbnail_url": null
-    },
-    {
-      "video_id": "69c8a3349639891c461300b9",
-      "start": 2421.0,
-      "end": 2427.5,
-      "play_type": "TEAMFIGHT",
-      "excitement_score": 7.0,
-      "description": "Watson that he will finish Daedalus right before he dies there. You just don't have it for that fight. No surprise, Tundra",
-      "player_name": "Pure~",
-      "match_id": 8747660830,
-      "opponent": "Enemy Team",
-      "thumbnail_url": null
+      "match_id": 8747822091,
+      "opponent": null,
+      "hls_url": null,
+      "thumbnail_url": null,
+      "ai_insight": "This moment cements Pure~'s dominance, turning the tide with a high-impact play that fuels momentum and electrifies the crowd.",
+      "surfaced_delta_seconds": 26
     }
   ]
 }

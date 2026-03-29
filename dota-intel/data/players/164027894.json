@@ -10,7 +10,11 @@
     "win_rate": 0.67,
     "ai_impact_score": 53.6,
     "highlight_count": 5,
-    "top_heroes": [129, 97, 19],
+    "top_heroes": [
+      129,
+      97,
+      19
+    ],
     "avatar_url": null
   },
   "recent_matches": [
@@ -51,66 +55,5 @@
       "clip_count": 1
     }
   ],
-  "highlights": [
-    {
-      "video_id": "69c88d43c704e7c92b858da7",
-      "start": 920.0,
-      "end": 928.0,
-      "play_type": "GODLIKE",
-      "excitement_score": 9.0,
-      "description": "Mars Arena of Blood traps three heroes on the high ground! Collapse with the spear pins two to the wall — it's a GODLIKE streak!",
-      "player_name": "Collapse",
-      "match_id": 8748176080,
-      "opponent": "Xtreme Gaming",
-      "thumbnail_url": null
-    },
-    {
-      "video_id": "69c88d43c704e7c92b858da7",
-      "start": 1650.0,
-      "end": 1657.0,
-      "play_type": "TEAMFIGHT",
-      "excitement_score": 7.5,
-      "description": "God's Rebuke into the Arena, Mars holding the frontline while Yatoro free-hits from behind. Beautiful setup from Collapse.",
-      "player_name": "Collapse",
-      "match_id": 8748176080,
-      "opponent": "Xtreme Gaming",
-      "thumbnail_url": null
-    },
-    {
-      "video_id": "69c8a3349639891c461300b9",
-      "start": 540.0,
-      "end": 548.0,
-      "play_type": "TEAMFIGHT",
-      "excitement_score": 9.5,
-      "description": "THE MAGNUS RP! FOUR HEROES CAUGHT! Collapse with the reverse polarity of a lifetime! Skewer back into tower range — OG is decimated!",
-      "player_name": "Collapse",
-      "match_id": 8747660830,
-      "opponent": "OG",
-      "thumbnail_url": null
-    },
-    {
-      "video_id": "69c8a3349639891c461300b9",
-      "start": 1200.0,
-      "end": 1207.0,
-      "play_type": "CLUTCH",
-      "excitement_score": 8.0,
-      "description": "Empower on Yatoro and the Skewer saves him from certain death! Collapse always finding the perfect moment.",
-      "player_name": "Collapse",
-      "match_id": 8747660830,
-      "opponent": "OG",
-      "thumbnail_url": null
-    },
-    {
-      "video_id": "69c8a3349639891c461300b9",
-      "start": 2300.0,
-      "end": 2308.0,
-      "play_type": "OBJECTIVE",
-      "excitement_score": 7.0,
-      "description": "Tiny tosses the creep wave onto the barracks as Team Spirit siege highground. GG!",
-      "player_name": "Collapse",
-      "match_id": 8747501220,
-      "opponent": "Nigma Galaxy",
-      "thumbnail_url": null
-    }
-  ]
+  "highlights": []
 }

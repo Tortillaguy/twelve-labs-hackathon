@@ -10,7 +10,11 @@
     "win_rate": 0.5,
     "ai_impact_score": 37.2,
     "highlight_count": 2,
-    "top_heroes": [98, 65, 120],
+    "top_heroes": [
+      98,
+      65,
+      120
+    ],
     "avatar_url": null
   },
   "recent_matches": [
@@ -39,30 +43,5 @@
       "clip_count": 1
     }
   ],
-  "highlights": [
-    {
-      "video_id": "69c88d43c704e7c92b858da7",
-      "start": 1870.0,
-      "end": 1878.0,
-      "play_type": "TEAMFIGHT",
-      "excitement_score": 7.5,
-      "description": "Timbersaw Chakram plus Timber Chain diving through the trees! 33 cuts through three heroes and survives with reactive armor stacks!",
-      "player_name": "33",
-      "match_id": 8748176080,
-      "opponent": "Nigma Galaxy",
-      "thumbnail_url": null
-    },
-    {
-      "video_id": "69c8a3349639891c461300b9",
-      "start": 2180.0,
-      "end": 2188.0,
-      "play_type": "OBJECTIVE",
-      "excitement_score": 7.0,
-      "description": "Batrider lasso pulls Ame out of the teamfight! 33 drags him all the way back to the tower but Ame BKBs and breaks free!",
-      "player_name": "33",
-      "match_id": 8747660830,
-      "opponent": "Xtreme Gaming",
-      "thumbnail_url": null
-    }
-  ]
+  "highlights": []
 }
