@@ -9,7 +9,7 @@ load_dotenv()
 from backend import cache
 from backend.models import LeaderboardResponse, PlayerDetail, Highlight
 from backend.twelvelabs_client import TwelveLabsClient
-from backend.highlights import merge_and_deduplicate
+from backend.highlights import merge_and_deduplicate, discover_discovery_first
 
 app = FastAPI(title="Dota Intel API")
 
@@ -50,52 +50,28 @@ async def get_player(account_id: int, demo: bool = False):
     detail = cache.read_player(account_id, demo=demo)
     if not detail:
         raise HTTPException(status_code=404, detail="Player not found.")
-    # Enrich highlights with hls_url so the frontend can capture per-segment thumbnail frames.
-    # Build a per-video cache to avoid repeated TwelveLabs calls.
-    try:
-        tl = get_tl()
-        video_cache: dict[str, dict] = {}
-        enriched = []
-        for hl in detail.highlights:
-            vid = hl.video_id
-            if vid not in video_cache:
-                video_cache[vid] = tl.get_video_info(vid) or {}
-            hl_dict = hl.model_dump()
-            hl_dict["hls_url"] = video_cache[vid].get("hls_url")
-            enriched.append(hl_dict)
-        result = detail.model_dump()
-        result["highlights"] = enriched
-        return result
-    except Exception:
-        # If TwelveLabs is unavailable, fall back to cached data without hls_url
-        return detail
+
+    # hls_url is pre-baked into highlights by `seed_index.py --stage prebake`.
+    # Fall back to the video_info_cache for any highlights that were added before
+    # prebake ran (e.g. demo/mock data).
+    result = detail.model_dump()
+    video_cache: dict[str, dict] = {}
+    for hl in result["highlights"]:
+        if hl.get("hls_url"):
+            continue  # already baked in — no API call needed
+        vid = hl["video_id"]
+        if vid not in video_cache:
+            video_cache[vid] = cache.read_video_info_cache(vid) or {}
+        info = video_cache[vid]
+        hl["hls_url"] = info.get("hls_url")
+        if not hl.get("thumbnail_url"):
+            hl["thumbnail_url"] = info.get("thumbnail_url")
+    return result
 
 
-
-# ── Video & Highlight endpoints ──────────────────────────────────────────────
-
-@app.get("/api/videos")
-async def list_videos():
-    """List all indexed videos with HLS streaming URLs."""
-    tl = get_tl()
-    videos = tl.list_videos()
-    # Attach match_id from filename (match_NNNN.mp4)
-    for v in videos:
-        m = re.search(r"match_(\d+)", v.get("filename") or "")
-        v["match_id"] = int(m.group(1)) if m else None
-    return {"videos": videos}
-
-@app.get("/api/videos/{video_id}")
-async def get_video(video_id: str):
-    """Get HLS stream URL and thumbnail for a specific video."""
-    tl = get_tl()
-    info = tl.get_video_info(video_id)
-    if not info:
-        raise HTTPException(status_code=404, detail="Video not found in index.")
-    return info
 
 @app.get("/api/search")
-async def search_clips(q: str, limit: int = 10):
+def search_clips(q: str, limit: int = 10):
     """Search across all indexed videos for moments matching a query."""
     tl = get_tl()
     clips = tl.search_highlights(q, page_limit=limit)
@@ -104,21 +80,25 @@ async def search_clips(q: str, limit: int = 10):
     for clip in clips:
         vid = clip["video_id"]
         if vid not in video_cache:
-            video_cache[vid] = tl.get_video_info(vid) or {}
+            try:
+                video_cache[vid] = tl.get_video_info(vid) or {}
+            except Exception as e:
+                print(f"[search] Warning: could not fetch video info for {vid}: {e}")
+                video_cache[vid] = {}
         clip["hls_url"] = video_cache[vid].get("hls_url")
         clip["video_thumbnail_url"] = video_cache[vid].get("thumbnail_url")
     return {"clips": clips}
 
 @app.post("/api/discover-highlights")
-async def discover_highlights(
+def discover_highlights(
     player_name: str,
     video_id: str,
     match_id: int | None = None,
     opponent: str | None = None,
+    hero_name: str | None = None,
 ):
     """Run AI highlight discovery for a player on a specific video."""
     tl = get_tl()
-    from backend.highlights import discover_discovery_first
     highlights = discover_discovery_first(
         index_id=tl.index_id,
         video_id=video_id,
@@ -126,9 +106,11 @@ async def discover_highlights(
         tl_client=tl,
         match_id=match_id,
         opponent=opponent,
+        hero_name=hero_name,
     )
     deduped = merge_and_deduplicate(highlights)
     return {"highlights": [h.model_dump() for h in deduped]}
+
 
 
 if __name__ == "__main__":

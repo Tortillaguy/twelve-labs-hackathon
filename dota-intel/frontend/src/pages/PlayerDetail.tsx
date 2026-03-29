@@ -141,6 +141,7 @@ interface RankedPlayer {
   ai_impact_score: number
   highlight_count: number
   top_heroes: number[]
+  avatar_url?: string
 }
 
 interface PlayerDetailData {
@@ -219,15 +220,17 @@ export default function PlayerDetail() {
     setTimeout(() => setToast(null), 2000)
   }
 
-  // Fetch AI-discovered clips for this player from TwelveLabs search
-  useEffect(() => {
-    if (!data?.player.name) return
+  const fetchDiscoveryClips = () => {
+    if (!data?.player.name || clipsLoading) return
     setClipsLoading(true)
-    api.get('/api/search', { params: { q: `${data.player.name} Dota 2 exciting play kill`, limit: 8 } })
+    const heroName = getHeroName(data.player.top_heroes[0] || 0)
+    const query = `${data.player.name} ${heroName} Dota 2 exciting high-intensity play kill`
+    api.get('/api/search', { params: { q: query, limit: 8 } })
       .then(res => setSearchClips(res.data.clips ?? []))
       .catch(err => console.error('Failed to search clips', err))
       .finally(() => setClipsLoading(false))
-  }, [data?.player.name])
+  }
+
 
   if (loading) {
     return (
@@ -299,7 +302,13 @@ export default function PlayerDetail() {
 
         {/* Player Profile Card */}
         <div className="bg-obsidian-dark border border-obsidian-border rounded-xl p-[22px_28px] flex items-center gap-7">
-          {topHeroes[0] ? (
+          {player?.avatar_url ? (
+            <img 
+              src={player.avatar_url} 
+              alt={player.name} 
+              className="w-[72px] h-[72px] rounded-full object-cover border-2 border-accent-dota/30 shadow-lg flex-shrink-0"
+            />
+          ) : topHeroes[0] ? (
             <HeroPortrait heroId={topHeroes[0]} size="lg" className="flex-shrink-0" />
           ) : (
             <div className="w-[60px] h-[60px] rounded-sm bg-accent-dota flex-shrink-0" />
@@ -414,7 +423,17 @@ export default function PlayerDetail() {
                   <Video size={16} className="text-[#60A5FA]" />
                   <span className="text-sm font-bold uppercase tracking-wider text-[#60A5FA]">Global AI Discovery</span>
                 </div>
-                <div className="text-[10px] text-[#555568] italic">Semantic search across full archive</div>
+                {searchClips.length === 0 && !clipsLoading ? (
+                  <button
+                    onClick={fetchDiscoveryClips}
+                    className="flex items-center gap-1.5 text-[11px] font-semibold text-[#60A5FA] border border-[#60A5FA]/30 rounded-md px-3 py-1 hover:bg-[#60A5FA]/10 transition-all"
+                  >
+                    <Sparkles size={11} />
+                    Discover clips
+                  </button>
+                ) : (
+                  <div className="text-[10px] text-[#555568] italic">Semantic search across full archive</div>
+                )}
               </div>
 
               {clipsLoading ? (
