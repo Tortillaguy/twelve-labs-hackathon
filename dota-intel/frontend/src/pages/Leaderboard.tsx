@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { Swords, Users, Video, Zap, Play } from 'lucide-react'
 import Header from '../components/Header'
+import { getHeroName } from '../utils/heroes'
 
 interface RankedPlayer {
   rank: number
@@ -140,7 +141,9 @@ export default function Leaderboard() {
                     <div className="text-[13px] font-semibold group-hover:text-accent-dota transition-colors">
                       {player.name}
                     </div>
-                    <div className="text-[11px] text-[#555568]">{player.team}</div>
+                    <div className="text-[11px] text-[#555568]">
+                      {player.team}  ·  {player.top_heroes.map(id => getHeroName(id)).join(', ')}
+                    </div>
                   </div>
                 </div>
                 <div className="w-[110px] text-center text-xs text-[#E8E8F0]">

@@ -1,26 +1,27 @@
 import { useState, useEffect, useRef } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import axios from 'axios'
 import Hls from 'hls.js'
 import { Sparkles, ArrowLeft, Mic2, Play, X } from 'lucide-react'
 import Header from '../components/Header'
+import { getHeroName } from '../utils/heroes'
 
 /**
  * Seeks an offscreen HLS video to `seekTo` seconds and captures a canvas frame.
  * Returns a data URL or null if capture fails / HLS is not available.
+ * Now includes lazy-loading: only captures when `isVisible` is true.
  */
-function useClipThumbnail(hlsUrl: string | null | undefined, seekTo: number): string | null {
+function useClipThumbnail(hlsUrl: string | null | undefined, seekTo: number, isVisible: boolean): string | null {
   const [dataUrl, setDataUrl] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!hlsUrl) return
+    if (!hlsUrl || !isVisible || dataUrl) return
     let hls: Hls | null = null
     let cancelled = false
 
     const video = document.createElement('video')
     video.muted = true
     video.crossOrigin = 'anonymous'
-    // Keep it tiny — we only need a frame capture, not rendering
     video.width = 480
     video.height = 270
     video.style.display = 'none'
@@ -39,7 +40,6 @@ function useClipThumbnail(hlsUrl: string | null | undefined, seekTo: number): st
           if (!cancelled) setDataUrl(url)
         }
       } catch {
-        // cross-origin taint or decode error — leave null
       } finally {
         cleanup()
       }
@@ -64,7 +64,6 @@ function useClipThumbnail(hlsUrl: string | null | undefined, seekTo: number): st
       hls.loadSource(hlsUrl)
       hls.attachMedia(video)
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        // Fragment loaded — browser can decode; try seeking
         seekAndCapture()
       })
       hls.on(Hls.Events.ERROR, (_evt, data) => {
@@ -81,7 +80,7 @@ function useClipThumbnail(hlsUrl: string | null | undefined, seekTo: number): st
       cancelled = true
       cleanup()
     }
-  }, [hlsUrl, seekTo])
+  }, [hlsUrl, seekTo, isVisible, dataUrl])
 
   return dataUrl
 }
@@ -153,6 +152,7 @@ export default function PlayerDetail() {
 
   const [data, setData] = useState<PlayerDetailData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [search, setSearch] = useState('')
   const [searchClips, setSearchClips] = useState<SearchClip[]>([])
   const [clipsLoading, setClipsLoading] = useState(false)
@@ -160,9 +160,13 @@ export default function PlayerDetail() {
 
   useEffect(() => {
     setLoading(true)
+    setError(null)
     axios.get(`/api/players/${accountId}`, { params: { demo: demoMode } })
       .then(res => setData(res.data))
-      .catch(err => console.error('Failed to fetch player', err))
+      .catch(err => {
+        console.error('Failed to fetch player', err)
+        setError(err.response?.data?.detail || err.message || 'Failed to load player data')
+      })
       .finally(() => setLoading(false))
   }, [accountId, demoMode])
 
@@ -185,14 +189,15 @@ export default function PlayerDetail() {
           demoMode={demoMode}
           onDemoToggle={() => setSearchParams({ demo: (!demoMode).toString() })}
         />
-        <div className="flex items-center justify-center h-[calc(100vh-64px)] text-[#555568]">
-          Loading player data...
+        <div className="flex flex-col items-center justify-center h-[calc(100vh-64px)] gap-4">
+          <div className="w-10 h-10 border-4 border-accent-ai/20 border-t-accent-ai rounded-full animate-spin" />
+          <span className="text-[#555568] animate-pulse">Analyzing player archives...</span>
         </div>
       </div>
     )
   }
 
-  if (!data) {
+  if (error || !data) {
     return (
       <div className="min-h-screen bg-obsidian text-[#E8E8F0]">
         <Header 
@@ -201,8 +206,20 @@ export default function PlayerDetail() {
           demoMode={demoMode}
           onDemoToggle={() => setSearchParams({ demo: (!demoMode).toString() })}
         />
-        <div className="flex items-center justify-center h-[calc(100vh-64px)] text-[#555568]">
-          Player not found.
+        <div className="flex flex-col items-center justify-center h-[calc(100vh-64px)] gap-4 px-10 text-center">
+          <div className="w-16 h-16 rounded-full bg-accent-loss/10 flex items-center justify-center text-accent-loss">
+            <X size={32} />
+          </div>
+          <h2 className="text-xl font-bold">Failed to Load Profile</h2>
+          <p className="text-[#555568] max-w-md">
+            {error || "We couldn't find this player in our indexed archives. Try enabling Demo Mode or running the ingestion pipeline."}
+          </p>
+          <button
+            onClick={() => navigate(demoMode ? '/?demo=true' : '/')}
+            className="mt-4 px-6 py-2 bg-obsidian-light border border-obsidian-border rounded-lg hover:border-accent-dota transition-all text-sm font-semibold"
+          >
+            Return to Leaderboard
+          </button>
         </div>
       </div>
     )
@@ -238,7 +255,9 @@ export default function PlayerDetail() {
             <div className="flex items-center gap-2.5">
               <span className="text-[13px] text-[#6B6B88]">{player.team}</span>
               <RoleBadge label="Carry" />
-              <HeroBadge label="Core" />
+              {player.top_heroes.slice(0, 3).map(id => (
+                <HeroBadge key={id} label={getHeroName(id)} />
+              ))}
             </div>
           </div>
           <div className="flex-1" />
@@ -269,12 +288,12 @@ export default function PlayerDetail() {
           />
         </div>
 
-        {/* Two-Column Layout */}
-        <div className="flex gap-5">
+        {/* Responsive Two-Column Layout */}
+        <div className="flex flex-col xl:flex-row gap-5">
           {/* Left: Match History */}
-          <div className="w-[420px] flex-shrink-0 space-y-3">
+          <div className="w-full xl:w-[420px] flex-shrink-0 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-bold">Match History</span>
+              <span className="text-sm font-bold uppercase tracking-wider text-[#555568]">Verified Match History</span>
               <span className="text-xs text-[#555568]">{recent_matches.length} matches</span>
             </div>
             {recent_matches.length === 0 ? (
@@ -289,60 +308,80 @@ export default function PlayerDetail() {
           </div>
 
           {/* Right: AI Highlights */}
-          <div className="flex-1 space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Sparkles size={16} className="text-accent-ai" />
-                <span className="text-sm font-bold">AI Highlights</span>
+          <div className="flex-1 space-y-6">
+            {/* Verified Highlights Section */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Sparkles size={16} className="text-accent-ai" />
+                  <span className="text-sm font-bold uppercase tracking-wider text-accent-ai">Verified AI Highlights</span>
+                </div>
+                <div className="flex items-center h-[22px] px-2.5 rounded-full bg-[#1A0A33] border border-[#3D2475]">
+                  <span className="text-[9px] font-semibold text-accent-ai">MATCH CORRELATED</span>
+                </div>
               </div>
-              <div className="flex items-center h-[22px] px-2.5 rounded-full bg-[#1A0A33] border border-[#3D2475]">
-                <span className="text-[9px] font-semibold text-accent-ai">Powered by TwelveLabs</span>
-              </div>
+
+              {/* Video Player */}
+              {activeClip && (
+                <div className="relative mb-4">
+                  <button
+                    onClick={() => setActiveClip(null)}
+                    className="absolute top-2 right-2 z-10 w-7 h-7 flex items-center justify-center rounded-full bg-black/70 hover:bg-black text-white transition-colors"
+                  >
+                    <X size={14} />
+                  </button>
+                  <HlsPlayer hlsUrl={activeClip.hlsUrl} startTime={activeClip.start} endTime={activeClip.end} />
+                </div>
+              )}
+
+              {highlights.length === 0 ? (
+                <div className="bg-obsidian-dark border border-obsidian-border rounded-lg p-10 text-center text-sm text-[#555568]">
+                  No verified highlights found for these matches.
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {highlights.map((hl, i) => (
+                    <HighlightCard
+                      key={i}
+                      highlight={hl}
+                      onPlay={() => hl.hls_url && setActiveClip({ hlsUrl: hl.hls_url, start: hl.start, end: hl.end })}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
 
-            {/* Video Player */}
-            {activeClip && (
-              <div className="relative">
-                <button
-                  onClick={() => setActiveClip(null)}
-                  className="absolute top-2 right-2 z-10 w-7 h-7 flex items-center justify-center rounded-full bg-black/70 hover:bg-black text-white transition-colors"
-                >
-                  <X size={14} />
-                </button>
-                <HlsPlayer hlsUrl={activeClip.hlsUrl} startTime={activeClip.start} endTime={activeClip.end} />
+            {/* Global Discovery Section */}
+            <div className="space-y-3 pt-4 border-t border-obsidian-border/50">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Video size={16} className="text-[#60A5FA]" />
+                  <span className="text-sm font-bold uppercase tracking-wider text-[#60A5FA]">Global AI Discovery</span>
+                </div>
+                <div className="text-[10px] text-[#555568] italic">Semantic search across full archive</div>
               </div>
-            )}
 
-            {/* Search-discovered clips from TwelveLabs */}
-            {clipsLoading ? (
-              <div className="bg-obsidian-dark border border-obsidian-border rounded-lg p-10 text-center text-sm text-[#555568]">
-                Searching indexed videos for highlights...
-              </div>
-            ) : searchClips.length > 0 ? (
-              <div className="grid grid-cols-2 gap-3">
-                {searchClips.map((clip, i) => (
-                  <SearchClipCard
-                    key={i}
-                    clip={clip}
-                    onPlay={() => clip.hls_url && setActiveClip({ hlsUrl: clip.hls_url, start: clip.start, end: clip.end })}
-                  />
-                ))}
-              </div>
-            ) : highlights.length === 0 ? (
-              <div className="bg-obsidian-dark border border-obsidian-border rounded-lg p-10 text-center text-sm text-[#555568]">
-                No AI highlights indexed yet. Run the ingestion pipeline to discover highlight clips.
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 gap-3">
-                {highlights.map((hl, i) => (
-                  <HighlightCard
-                    key={i}
-                    highlight={hl}
-                    onPlay={() => hl.hls_url && setActiveClip({ hlsUrl: hl.hls_url, start: hl.start, end: hl.end })}
-                  />
-                ))}
-              </div>
-            )}
+              {clipsLoading ? (
+                <div className="bg-obsidian-dark border border-obsidian-border rounded-lg p-10 text-center text-sm text-[#555568]">
+                  <div className="w-6 h-6 border-2 border-[#60A5FA]/20 border-t-[#60A5FA] rounded-full animate-spin mx-auto mb-2" />
+                  Searching archive for related plays...
+                </div>
+              ) : searchClips.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {searchClips.map((clip, i) => (
+                    <SearchClipCard
+                      key={i}
+                      clip={clip}
+                      onPlay={() => clip.hls_url && setActiveClip({ hlsUrl: clip.hls_url, start: clip.start, end: clip.end })}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-6 text-xs text-[#3A3A55]">
+                  No additional clips found in global archive.
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </main>
@@ -382,7 +421,7 @@ function MatchCard({ match }: { match: MatchSummary }) {
             {match.kills} / {match.deaths} / {match.assists}
           </span>
           <span className="text-[11px] text-[#6B6B88]">{match.gpm} GPM</span>
-          <span className="text-[11px] text-accent-ai">Hero {match.hero_id}</span>
+          <span className="text-[11px] text-accent-ai">{getHeroName(match.hero_id)}</span>
         </div>
       </div>
       {match.clip_count > 0 && (
@@ -447,14 +486,29 @@ function HlsPlayer({ hlsUrl, startTime, endTime }: { hlsUrl: string; startTime: 
 }
 
 function SearchClipCard({ clip, onPlay }: { clip: SearchClip; onPlay: () => void }) {
-  const thumbnail = useClipThumbnail(clip.hls_url, clip.start)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setIsVisible(true)
+        observer.disconnect()
+      }
+    }, { threshold: 0.1 })
+    if (containerRef.current) observer.observe(containerRef.current)
+    return () => observer.disconnect()
+  }, [])
+
+  const thumbnail = useClipThumbnail(clip.hls_url, clip.start, isVisible)
   // Fall back to static video thumbnail while the frame is being captured
   const displayThumb = thumbnail ?? clip.video_thumbnail_url
 
   return (
     <div
+      ref={containerRef}
       onClick={onPlay}
-      className="bg-obsidian-light border border-obsidian-border rounded-[10px] overflow-hidden cursor-pointer hover:border-accent-ai/50 transition-all group"
+      className="bg-obsidian-dark border border-obsidian-border rounded-lg overflow-hidden cursor-pointer hover:border-accent-ai/50 transition-all group"
     >
       <div className="h-[120px] bg-[#1A1A26] relative flex items-center justify-center">
         {displayThumb ? (
@@ -497,11 +551,25 @@ function SearchClipCard({ clip, onPlay }: { clip: SearchClip; onPlay: () => void
 }
 
 function HighlightCard({ highlight, onPlay }: { highlight: Highlight; onPlay?: () => void }) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setIsVisible(true)
+        observer.disconnect()
+      }
+    }, { threshold: 0.1 })
+    if (containerRef.current) observer.observe(containerRef.current)
+    return () => observer.disconnect()
+  }, [])
+
   const typeColors: Record<string, { bg: string; text: string }> = {
-    RAMPAGE: { bg: 'bg-[#2A0A0A]', text: 'text-[#FF4444]' },
+    RAMPAGE: { bg: 'bg-[#2A0A0A]', text: 'text-accent-loss' },
     GODLIKE: { bg: 'bg-[#2A200A]', text: 'text-[#FFB800]' },
     TEAMFIGHT: { bg: 'bg-[#0A1A2A]', text: 'text-[#60A5FA]' },
-    OBJECTIVE: { bg: 'bg-[#0D2E0D]', text: 'text-[#22C55E]' },
+    OBJECTIVE: { bg: 'bg-obsidian-darker', text: 'text-accent-win' },
     CLUTCH: { bg: 'bg-[#1A0A33]', text: 'text-accent-ai' },
   }
   const colors = typeColors[highlight.play_type] ?? typeColors.CLUTCH
@@ -515,13 +583,14 @@ function HighlightCard({ highlight, onPlay }: { highlight: Highlight; onPlay?: (
   }
 
   // Capture a frame from the highlight's exact start position in the HLS stream
-  const thumbnail = useClipThumbnail(highlight.hls_url, highlight.start)
+  const thumbnail = useClipThumbnail(highlight.hls_url, highlight.start, isVisible)
   const displayThumb = thumbnail ?? highlight.thumbnail_url
 
   return (
     <div
+      ref={containerRef}
       onClick={onPlay}
-      className={`bg-obsidian-light border border-obsidian-border rounded-[10px] overflow-hidden ${onPlay ? 'cursor-pointer hover:border-accent-ai/50' : ''} transition-all group`}
+      className={`bg-obsidian-dark border border-obsidian-border rounded-lg overflow-hidden ${onPlay ? 'cursor-pointer hover:border-accent-ai/50' : ''} transition-all group`}
     >
       <div className={`h-[120px] ${thumbBg[highlight.play_type] ?? 'bg-obsidian-lighter'} relative flex items-center justify-center`}>
         {displayThumb ? (

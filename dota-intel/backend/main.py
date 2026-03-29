@@ -46,6 +46,7 @@ async def get_leaderboard(demo: bool = False):
 
 @app.get("/api/players/{account_id}")
 async def get_player(account_id: int, demo: bool = False):
+    print(f"[debug] Fetching player {account_id} (demo={demo})")
     detail = cache.read_player(account_id, demo=demo)
     if not detail:
         raise HTTPException(status_code=404, detail="Player not found.")

@@ -1,4 +1,5 @@
 import { Search, Trophy, Sparkles } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 interface HeaderProps {
   search: string
@@ -10,11 +11,17 @@ interface HeaderProps {
 export default function Header({ search, onSearchChange, demoMode, onDemoToggle }: HeaderProps) {
   return (
     <header className="h-16 bg-obsidian-darker border-b border-obsidian-border px-10 flex items-center justify-between sticky top-0 z-50">
-      <div className="flex items-center gap-3.5">
+      <Link 
+        to={demoMode ? '/?demo=true' : '/'} 
+        className="flex items-center gap-3.5 hover:opacity-80 transition-opacity"
+      >
         <div className="w-7 h-7 bg-accent-dota rounded-sm flex items-center justify-center">
           <Trophy size={16} className="text-white" />
         </div>
         <span className="font-bold text-sm tracking-[2px] text-[#E8E8F0]">DOTA INTEL</span>
+      </Link>
+
+      <div className="flex items-center gap-3.5">
         <div className="w-px h-5 bg-obsidian-border-muted mx-0.5" />
         <span className="text-[13px] text-[#6B6B88]">ESL One Birmingham 2026</span>
       </div>

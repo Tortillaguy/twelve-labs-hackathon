@@ -13,6 +13,9 @@ def write_leaderboard(response: LeaderboardResponse) -> None:
 def read_leaderboard(demo: bool = False) -> LeaderboardResponse | None:
     path = (MOCK_DIR if demo else DATA_DIR) / "leaderboard.json"
     if not path.exists():
+        # Fallback to mock if requested regular doesn't exist (helpful for initial setup)
+        if not demo and MOCK_DIR.joinpath("leaderboard.json").exists():
+            return read_leaderboard(demo=True)
         return None
     return LeaderboardResponse.model_validate_json(path.read_text())
 
@@ -24,8 +27,10 @@ def write_player(account_id: int, detail: PlayerDetail) -> None:
 def read_player(account_id: int, demo: bool = False) -> PlayerDetail | None:
     path = (MOCK_DIR if demo else DATA_DIR) / "players" / f"{account_id}.json"
     if not path.exists():
-        # Fallback to non-mock if mock doesn't exist but requested (for existing players in demo)
-        if demo:
-            return read_player(account_id, demo=False)
+        # Cross-fallback: if not found in requested dir, check the other one
+        other_dir = DATA_DIR if demo else MOCK_DIR
+        fallback_path = other_dir / "players" / f"{account_id}.json"
+        if fallback_path.exists():
+            return PlayerDetail.model_validate_json(fallback_path.read_text())
         return None
     return PlayerDetail.model_validate_json(path.read_text())
