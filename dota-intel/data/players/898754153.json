@@ -2,8 +2,8 @@
   "player": {
     "rank": 1,
     "account_id": 898754153,
-    "name": "念头通达",
-    "team": "Radiant",
+    "name": "Lou",
+    "team": "Xtreme Gaming",
     "kda": "2 / 0 / 6",
     "avg_kda_ratio": 17.0,
     "avg_gpm": 401.5,
@@ -12,7 +12,8 @@
     "highlight_count": 1,
     "top_heroes": [
       10
-    ]
+    ],
+    "avatar_url": "https://avatars.steamstatic.com/60809dd3341337b72428268672361bf345d404bb_full.jpg"
   },
   "recent_matches": [
     {
@@ -36,7 +37,7 @@
       "play_type": "TEAMFIGHT",
       "excitement_score": 7.0,
       "description": "going for him. Silence comes out, but it's still too late. He's got all his spells off on the Sand King. And Satanic, he just cannot afford to get in",
-      "player_name": "念头通达",
+      "player_name": "Lou",
       "match_id": 8748176080,
       "opponent": "Enemy Team",
       "thumbnail_url": null

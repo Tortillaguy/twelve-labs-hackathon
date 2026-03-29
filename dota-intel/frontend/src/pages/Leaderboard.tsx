@@ -18,6 +18,7 @@ interface RankedPlayer {
   ai_impact_score: number
   highlight_count: number
   top_heroes: number[]
+  avatar_url?: string
 }
 
 interface LeaderboardData {
@@ -137,7 +138,15 @@ export default function Leaderboard() {
                   </span>
                 </div>
                 <div className="flex-1 px-3 flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-obsidian-lighter to-obsidian-border flex-shrink-0" />
+                  {player.avatar_url ? (
+                    <img 
+                      src={player.avatar_url} 
+                      alt="" 
+                      className="w-8 h-8 rounded-full object-cover border border-obsidian-border"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-obsidian-lighter to-obsidian-border flex-shrink-0" />
+                  )}
                   <div>
                     <div className="text-[13px] font-semibold group-hover:text-accent-dota transition-colors">
                       {player.name}

@@ -87,6 +87,15 @@ def rank_players(player_data: list[dict]) -> list[RankedPlayer]:
         avg_d = stats.total_deaths // max(stats.matches, 1)
         avg_a = stats.total_assists // max(stats.matches, 1)
 
+        from backend.opendota import OpenDotaClient
+        client = OpenDotaClient()
+        avatar_url = None
+        try:
+            profile = client.fetch_player_profile(stats.account_id)
+            avatar_url = profile.get("profile", {}).get("avatarfull")
+        except Exception:
+            pass
+
         scored.append(RankedPlayer(
             rank=0,  # assigned below
             account_id=stats.account_id,
@@ -99,7 +108,9 @@ def rank_players(player_data: list[dict]) -> list[RankedPlayer]:
             ai_impact_score=score,
             highlight_count=len(highlights),
             top_heroes=list(dict.fromkeys(stats.hero_ids))[:3],
+            avatar_url=avatar_url,
         ))
+
 
     scored.sort(key=lambda p: p.ai_impact_score, reverse=True)
     for i, p in enumerate(scored):

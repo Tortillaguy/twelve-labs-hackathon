@@ -18,6 +18,37 @@ from backend.highlights import discover_event_anchored, merge_and_deduplicate
 from backend.scoring import aggregate_player_stats, rank_players
 import time
 
+# Canonical pro roster: account_id → {name, team}
+# The OpenDota API often returns Steam "personaname" (e.g. Chinese characters)
+# instead of the player's professional tag. This map is the source of truth.
+PLAYER_ROSTER: dict[int, dict] = {
+    173978074: {"name": "NothingToSay", "team": "Team Zero"},
+    321580662: {"name": "Yatoro",       "team": "Team Spirit"},
+    331855530: {"name": "Pure~",        "team": "Tundra Esports"},
+    93618577:  {"name": "malr1ne",      "team": "Team Falcons"},
+    898754153: {"name": "Lou",          "team": "Xtreme Gaming"},
+}
+
+
+def _resolve_player_name(p: dict, od: OpenDotaClient) -> str:
+    """Resolve a player's display name using PLAYER_ROSTER first, then OpenDota pro name."""
+    aid = p.get("account_id")
+    if aid and aid in PLAYER_ROSTER:
+        return PLAYER_ROSTER[aid]["name"]
+    # Fallback: try OpenDota's pro name resolution
+    if aid:
+        return od.get_player_name(aid)
+    return p.get("personaname") or p.get("name") or f"Player {p['player_slot']}"
+
+
+def _resolve_team_name(p: dict) -> str:
+    """Resolve a player's team name using PLAYER_ROSTER first, then slot-based fallback."""
+    aid = p.get("account_id")
+    if aid and aid in PLAYER_ROSTER:
+        return PLAYER_ROSTER[aid]["team"]
+    return "Radiant" if p["player_slot"] < 128 else "Dire"
+
+
 def main():
     tl = TwelveLabsClient()
     od = OpenDotaClient()
@@ -97,8 +128,8 @@ def main():
         # 4. Discover highlights for these top performers (lightweight — no Pegasus analyze)
         for p in top_players:
             aid = p.get("account_id")
-            name = p.get("personaname") or p.get("name") or f"Player {p['player_slot']}"
-            team_name = "Radiant" if p["player_slot"] < 128 else "Dire"
+            name = _resolve_player_name(p, od)
+            team_name = _resolve_team_name(p)
             
             print(f"[discover] >>> {name} ({aid}) ...")
             if aid not in all_player_highlights:

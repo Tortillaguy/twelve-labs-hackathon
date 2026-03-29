@@ -1,23 +1,16 @@
-# Execution Log - Task 7 Start
+# Superpowers Execution Log
 
-- **Step 0.1: Project Bootstrap** - COMPLETED
-  - Files: `dota-intel/requirements.txt`, `dota-intel/.env.example`
-- **Step 0.2: OpenDota Client** - COMPLETED
-  - Files: `dota-intel/backend/opendota.py`
-- **Step 7.1: Write scripts/find_match_segments.py** - COMPLETED
-  - Files: `dota-intel/scripts/find_match_segments.py`
-  - Fixed exact league matching and optimized start_time lookup.
-- **Step 7.2: Write backend/ingestion.py** - COMPLETED
-  - Files: `dota-intel/backend/ingestion.py`
-- **Step 7.3: Verification** - COMPLETED
-  - Successfully mapped 7 matches from Twitch VOD `2733778836` to league `ESL One Birmingham 2026`.
-  - Output file: `data/match_segments.json`.
+## Step 1: Update format to 720p
+- **Files changed**: `dota-intel/backend/ingestion.py`
+- **What changed**:
+  - Updated `download_match_segment` yt-dlp `--format` string to pull 720p instead of 480p.
+- **Verification**: Checked file to ensure `height<=720` is present.
+- **Result**: Pass
 
-## Discoveries
-- League ID: `19422` (ESL One Birmingham 2026)
-- Found matches: `8748176080`, `8748080084`, `8748008577`, `8747822091`, `8747660830`, `8747486863`, `8747354565`.
-- Verified `yt-dlp` needs to be updated to 2026.x to correctly parse Twitch timestamps in 2026.
-
-## Next Steps
-- Implement `scripts/seed_index.py` to download and index a sample segment.
-
+## Step 2: Create download script
+- **Files changed**: `scripts/download_missing_720p.py`
+- **What changed**:
+  - Created a targeted script that compares `match_segments.json` (dataset) with `video_map.json` (indexed videos).
+  - Triggers a 720p download for matches that are not present in `video_map.json`, removing any existing artifacts to ensure a fresh download.
+- **Verification**: Execution of `python scripts/download_missing_720p.py`
+- **Result**: Pass (currently running successfully)

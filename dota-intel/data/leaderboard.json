@@ -9,7 +9,7 @@
       "rank": 1,
       "account_id": 331855530,
       "name": "Pure~",
-      "team": "Dire",
+      "team": "Tundra Esports",
       "kda": "8 / 0 / 5",
       "avg_kda_ratio": 27.0,
       "avg_gpm": 414.5,
@@ -18,13 +18,14 @@
       "highlight_count": 3,
       "top_heroes": [
         49
-      ]
+      ],
+      "avatar_url": "https://avatars.steamstatic.com/ecf7db47b7c4d7232a3451e6e051b7e6bd0e30e1_full.jpg"
     },
     {
       "rank": 2,
       "account_id": 93618577,
-      "name": "шапира-",
-      "team": "Dire",
+      "name": "malr1ne",
+      "team": "Team Falcons",
       "kda": "5 / 0 / 8",
       "avg_kda_ratio": 27.0,
       "avg_gpm": 353.0,
@@ -33,13 +34,14 @@
       "highlight_count": 3,
       "top_heroes": [
         106
-      ]
+      ],
+      "avatar_url": "https://avatars.steamstatic.com/b19df011bbc2c18e4bc8a47cb82c0467726e8e1d_full.jpg"
     },
     {
       "rank": 3,
       "account_id": 898754153,
-      "name": "念头通达",
-      "team": "Radiant",
+      "name": "Lou",
+      "team": "Xtreme Gaming",
       "kda": "2 / 0 / 6",
       "avg_kda_ratio": 17.0,
       "avg_gpm": 401.5,
@@ -48,13 +50,14 @@
       "highlight_count": 1,
       "top_heroes": [
         10
-      ]
+      ],
+      "avatar_url": "https://avatars.steamstatic.com/60809dd3341337b72428268672361bf345d404bb_full.jpg"
     },
     {
       "rank": 4,
       "account_id": 173978074,
       "name": "NothingToSay",
-      "team": "Radiant",
+      "team": "Team Zero",
       "kda": "5 / 1 / 7",
       "avg_kda_ratio": 12.5,
       "avg_gpm": 305.5,
@@ -63,7 +66,8 @@
       "highlight_count": 1,
       "top_heroes": [
         16
-      ]
+      ],
+      "avatar_url": "https://avatars.steamstatic.com/ce4ca44366af2be5e8f521bacb519401bd4ad658_full.jpg"
     }
   ]
 }

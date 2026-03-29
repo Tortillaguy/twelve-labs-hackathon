@@ -7,6 +7,7 @@ Stages (run independently or together):
   --stage upload     Upload downloaded segments to TwelveLabs and wait for indexing
   --stage metadata   PATCH each TwelveLabs video with OpenDota match metadata
   --stage highlights Discover AI highlights for each player across indexed videos
+  --stage prebake    Pre-bake HLS URLs into player JSONs so webapp needs no TL calls
   --stage score      Aggregate stats, rank players, write leaderboard + player JSONs
 
 Run all stages in order (default):
@@ -17,6 +18,7 @@ Run individual stages to resume after a failure:
   python scripts/seed_index.py --stage upload
   python scripts/seed_index.py --stage metadata
   python scripts/seed_index.py --stage highlights
+  python scripts/seed_index.py --stage prebake
   python scripts/seed_index.py --stage score
 
 State files written between stages (all under data/):
@@ -25,12 +27,15 @@ State files written between stages (all under data/):
   data/video_map.json            — match_id → TwelveLabs video_id (stage: upload)
   data/match_details.json        — OpenDota raw match data, keyed by match_id (stage: upload)
   data/player_highlights.json    — discovered highlights per account_id (stage: highlights)
+  data/videos.json               — pre-baked video listing with HLS URLs (stage: prebake)
+  data/video_info_cache.json     — per-video HLS cache used by webapp (stage: prebake)
 """
 
 import argparse
 import json
 import os
 import sys
+import time
 from pathlib import Path
 
 # Add project root to path
@@ -42,6 +47,7 @@ load_dotenv()
 from backend.opendota import OpenDotaClient
 from backend.twelvelabs_client import TwelveLabsClient
 from backend.ingestion import download_match_segment, ingest_vod, load_match_segments
+from backend.heroes import get_hero_name
 from backend.highlights import discover_event_anchored, discover_discovery_first, merge_and_deduplicate
 from backend.scoring import aggregate_player_stats, rank_players
 from backend.models import (
@@ -56,7 +62,11 @@ LEAGUE_NAME = os.environ.get("ESL_LEAGUE_NAME", "ESL One Birmingham 2026")
 PLAYER_ROSTER: dict[int, dict] = {
     173978074: {"name": "NothingToSay", "team": "Team Zero"},
     321580662: {"name": "Yatoro",       "team": "Team Spirit"},
+    331855530: {"name": "Pure~",        "team": "Tundra Esports"},
+    93618577:  {"name": "malr1ne",      "team": "Team Falcons"},
+    898754153: {"name": "Lou",          "team": "Xtreme Gaming"},
 }
+
 
 # Absolute paths derived from this file so they work regardless of CWD
 _ROOT = Path(__file__).parent.parent
@@ -139,7 +149,7 @@ def stage_download():
 
         seg_path = SEGMENT_CACHE_DIR / f"match_{mid}.mp4"
         if seg_path.exists():
-            print(f"[download] match {mid}: already cached ({seg_path.stat().stat().st_size / 1024**2:.0f} MB), skipping.")
+            print(f"[download] match {mid}: already cached ({seg_path.stat().st_size / 1024**2:.0f} MB), skipping.")
             processed += 1
             continue
 
@@ -381,6 +391,8 @@ def stage_highlights():
             print(f"[highlights] {info['name']} × match {mid_str}...")
             opponent = (seg.get("dire_team", "Unknown") if p_in_match.player_slot < 128
                         else seg.get("radiant_team", "Unknown"))
+            
+            hero_name = get_hero_name(p_in_match.hero_id)
 
             # Strategy A: event-anchored (kill events from OpenDota)
             event_clips = discover_event_anchored(
@@ -392,7 +404,9 @@ def stage_highlights():
                 tl_client=tl,
                 match_id=int(mid_str),
                 opponent=opponent,
+                hero_name=hero_name,
             )
+
             print(f"  [A] event-anchored: {len(event_clips)} clips")
 
             # Strategy B: discovery-first (caster mention + kill streak + in-game banners)
@@ -403,7 +417,9 @@ def stage_highlights():
                 tl_client=tl,
                 match_id=int(mid_str),
                 opponent=opponent,
+                hero_name=hero_name,
             )
+
             print(f"  [B] discovery-first: {len(discovery_clips)} clips")
 
             merged = merge_and_deduplicate(event_clips + discovery_clips)
@@ -417,6 +433,65 @@ def stage_highlights():
         _save_json(PLAYER_HIGHLIGHTS_PATH, raw_highlights)
 
     print(f"\n[highlights] Complete.")
+
+
+def stage_prebake():
+    """
+    Stage 4.5: Pre-bake HLS URLs into player JSONs and write data/videos.json.
+    Fetches TwelveLabs video listing ONCE, then embeds hls_url/thumbnail_url
+    directly into every highlight in every player JSON file.
+    After this stage the webapp never needs to call TwelveLabs at runtime
+    for player detail or video listing pages.
+    """
+    print("\n=== STAGE: prebake ===")
+    tl = TwelveLabsClient()
+    tl.get_or_create_index("dota-intel")
+
+    print("[prebake] Fetching all video info from TwelveLabs (one call)...")
+    videos = tl.list_videos()
+    video_map_by_id: dict[str, dict] = {v["video_id"]: v for v in videos}
+    print(f"[prebake] Got {len(videos)} videos.")
+
+    # Write data/videos.json for the /api/videos endpoint
+    _save_json(DATA_DIR / "videos.json", {"videos": videos})
+
+    # Write video_info_cache in one shot — avoids O(N) read-parse-write cycles
+    now = time.time()
+    video_info_cache = {
+        v["video_id"]: {
+            "video_id": v["video_id"],
+            "hls_url": v["hls_url"],
+            "thumbnail_url": v["thumbnail_url"],
+            "cached_at": now,
+        }
+        for v in videos
+    }
+    (DATA_DIR / "video_info_cache.json").write_text(json.dumps(video_info_cache, indent=2))
+    print(f"[prebake] Wrote video_info_cache.json ({len(video_info_cache)} entries).")
+
+    # Embed hls_url into every highlight in every player JSON
+    players_dir = DATA_DIR / "players"
+    patched_players = 0
+    for player_path in players_dir.glob("*.json"):
+        detail = cache.read_player(int(player_path.stem))
+        if not detail:
+            continue
+        changed = False
+        for hl in detail.highlights:
+            v = video_map_by_id.get(hl.video_id)
+            if v:
+                if not hl.hls_url and v.get("hls_url"):
+                    hl.hls_url = v["hls_url"]
+                    changed = True
+                if not hl.thumbnail_url and v.get("thumbnail_url"):
+                    hl.thumbnail_url = v["thumbnail_url"]
+                    changed = True
+        if changed:
+            cache.write_player(int(player_path.stem), detail)
+            patched_players += 1
+            print(f"[prebake] Patched {player_path.name}")
+
+    print(f"[prebake] Complete. {patched_players} player JSON(s) updated with HLS URLs.")
 
 
 def stage_score():
@@ -463,8 +538,8 @@ def stage_score():
             player = next(p for p in md.players if p.account_id == aid)
             is_radiant = player.player_slot < 128
             seg = match_segments.get(mid_str, {})
-            opponent = (seg.get("dire_team", "Unknown") if is_radiant
-                        else seg.get("radiant_team", "Unknown"))
+            opponent = (seg.get("dire_team") or "Unknown" if is_radiant
+                        else seg.get("radiant_team") or "Unknown")
             won = (is_radiant and md.radiant_win) or (not is_radiant and not md.radiant_win)
             clip_count = sum(1 for h in h_dedup if h.match_id == md.match_id)
             dur_m, dur_s = divmod(md.duration, 60)
@@ -521,13 +596,14 @@ def stage_score():
 
 # ── Entry point ───────────────────────────────────────────────────────────────
 
-ALL_STAGES = ["download", "upload", "metadata", "highlights", "score"]
+ALL_STAGES = ["download", "upload", "metadata", "highlights", "prebake", "score"]
 
 STAGE_FN = {
     "download":   stage_download,
     "upload":     stage_upload,
     "metadata":   stage_metadata,
     "highlights": stage_highlights,
+    "prebake":    stage_prebake,
     "score":      stage_score,
 }
 
@@ -541,6 +617,7 @@ Stages (in order):
   upload      Upload segments to TwelveLabs, cache video_id mapping
   metadata    PATCH TwelveLabs videos with OpenDota match data
   highlights  Discover AI highlights for each player
+  prebake     Pre-bake HLS URLs into player JSONs (eliminates runtime TL calls)
   score       Rank players, write leaderboard + player JSON files
 
 Examples:
@@ -549,6 +626,7 @@ Examples:
   python scripts/seed_index.py --stage upload       # only upload (resumes safely)
   python scripts/seed_index.py --stage metadata     # attach OpenDota data to existing videos
   python scripts/seed_index.py --stage highlights   # (re)run highlight discovery
+  python scripts/seed_index.py --stage prebake      # refresh HLS URLs without re-seeding
   python scripts/seed_index.py --stage score        # recompute rankings from cached data
 """,
     )

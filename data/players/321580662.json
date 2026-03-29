@@ -1,6 +1,6 @@
 {
   "player": {
-    "rank": 1,
+    "rank": 6,
     "account_id": 321580662,
     "name": "Yatoro",
     "team": "Team Spirit",
@@ -10,7 +10,8 @@
     "win_rate": 0.0,
     "ai_impact_score": 0.0,
     "highlight_count": 0,
-    "top_heroes": []
+    "top_heroes": [],
+    "avatar_url": "https://avatars.steamstatic.com/f3e9f90e016d6326e35f6a62a6218eeb5238dbaa_full.jpg"
   },
   "recent_matches": [],
   "highlights": []

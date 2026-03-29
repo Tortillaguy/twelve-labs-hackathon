@@ -3,7 +3,7 @@
     "rank": 1,
     "account_id": 173978074,
     "name": "NothingToSay",
-    "team": "Radiant",
+    "team": "Team Zero",
     "kda": "5 / 1 / 7",
     "avg_kda_ratio": 12.5,
     "avg_gpm": 305.5,
@@ -12,7 +12,8 @@
     "highlight_count": 1,
     "top_heroes": [
       16
-    ]
+    ],
+    "avatar_url": "https://avatars.steamstatic.com/ce4ca44366af2be5e8f521bacb519401bd4ad658_full.jpg"
   },
   "recent_matches": [
     {

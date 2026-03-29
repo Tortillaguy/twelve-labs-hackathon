@@ -33,7 +33,7 @@ def download_match_segment(
         [
             "yt-dlp",
             "--download-sections", f"*{start_ts}-{end_ts}",
-            "--format", "bestvideo[height<=480]+bestaudio/best[height<=480]",
+            "--format", "bestvideo[height<=720]+bestaudio/best[height<=720]",
             "--merge-output-format", "mp4",
             "--output", str(path),
             stream_url,

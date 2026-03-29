@@ -16,7 +16,12 @@
       "win_rate": 0.8,
       "ai_impact_score": 92.4,
       "highlight_count": 5,
-      "top_heroes": [1, 94, 11]
+      "top_heroes": [
+        1,
+        94,
+        11
+      ],
+      "avatar_url": "https://avatars.steamstatic.com/f3e9f90e016d6326e35f6a62a6218eeb5238dbaa_full.jpg"
     },
     {
       "rank": 2,
@@ -29,7 +34,12 @@
       "win_rate": 0.75,
       "ai_impact_score": 88.7,
       "highlight_count": 4,
-      "top_heroes": [10, 8, 12]
+      "top_heroes": [
+        10,
+        8,
+        12
+      ],
+      "avatar_url": "https://avatars.steamstatic.com/cf2556d326cf9195f4883404f038e91a71579c65_full.jpg"
     },
     {
       "rank": 3,
@@ -42,7 +52,12 @@
       "win_rate": 0.66,
       "ai_impact_score": 84.1,
       "highlight_count": 3,
-      "top_heroes": [16, 106, 17]
+      "top_heroes": [
+        16,
+        106,
+        17
+      ],
+      "avatar_url": "https://avatars.steamstatic.com/ce4ca44366af2be5e8f521bacb519401bd4ad658_full.jpg"
     },
     {
       "rank": 4,
@@ -55,7 +70,12 @@
       "win_rate": 0.6,
       "ai_impact_score": 81.2,
       "highlight_count": 4,
-      "top_heroes": [22, 11, 46]
+      "top_heroes": [
+        22,
+        11,
+        46
+      ],
+      "avatar_url": null
     },
     {
       "rank": 5,
@@ -68,7 +88,10 @@
       "win_rate": 0.5,
       "ai_impact_score": 66.9,
       "highlight_count": 3,
-      "top_heroes": [49]
+      "top_heroes": [
+        49
+      ],
+      "avatar_url": "https://avatars.steamstatic.com/ecf7db47b7c4d7232a3451e6e051b7e6bd0e30e1_full.jpg"
     }
   ]
 }

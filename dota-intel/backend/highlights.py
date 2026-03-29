@@ -23,6 +23,19 @@ def _name_matches(pegasus_name: str | None, target_name: str) -> bool:
     return target_name.lower() in pegasus_name.lower() or pegasus_name.lower() in target_name.lower()
 
 
+def _apply_streak_boost(excitement: float, streak_tier: str | None) -> float:
+    """Boost excitement score based on kill streak tier announced in-game."""
+    if not streak_tier:
+        return excitement
+    tier_index = next(
+        (idx for idx, t in enumerate(KILL_STREAK_TIERS) if t in streak_tier.lower()),
+        -1,
+    )
+    if tier_index >= 0:
+        excitement = min(10.0, excitement + 0.25 * (tier_index + 1))
+    return excitement
+
+
 def discover_event_anchored(
     kills_log: list[KillEvent],
     video_id: str,
@@ -32,6 +45,7 @@ def discover_event_anchored(
     tl_client,
     match_id: int,
     opponent: str,
+    hero_name: str = None,
 ) -> list[Highlight]:
     """
     For each kill where this player is the killer, ask Pegasus to classify
@@ -47,20 +61,13 @@ def discover_event_anchored(
         end = vod_time + CLIP_PADDING_SECONDS
 
         analysis_start = time.time()
-        analysis = tl_client.analyze_clip(video_id, start, end, target_player=player_name)
+        analysis = tl_client.analyze_clip(video_id, start, end, target_player=player_name, target_hero=hero_name)
         analysis_duration = int(time.time() - analysis_start)
         extracted_name = analysis.get("player_name")
-        # Boost excitement if Pegasus confirmed this kill had a streak announcement
-        streak_tier = analysis.get("streak_tier")  # e.g. "rampage"
-        excitement = float(analysis.get("excitement_score", 5.0))
-        if streak_tier:
-            tier_index = next(
-                (i for i, t in enumerate(KILL_STREAK_TIERS) if t in (streak_tier or "").lower()),
-                -1,
-            )
-            if tier_index >= 0:
-                # Each tier above "killing spree" adds up to +1.5 to excitement
-                excitement = min(10.0, excitement + 0.25 * (tier_index + 1))
+        excitement = _apply_streak_boost(
+            float(analysis.get("excitement_score", 5.0)),
+            analysis.get("streak_tier"),
+        )
 
         highlights.append(Highlight(
             video_id=video_id,
@@ -85,6 +92,7 @@ def discover_discovery_first(
     tl_client,
     match_id: int = None,
     opponent: str = None,
+    hero_name: str = None,
 ) -> list[Highlight]:
     """
     Run three targeted TwelveLabs searches for player-specific signal types:
@@ -95,25 +103,27 @@ def discover_discovery_first(
     confirm the extracted player_name matches the target.
     """
     streak_labels = " ".join(KILL_STREAK_TIERS)
+    hero_context = f" {hero_name}" if hero_name else ""
+
     targeted_queries = [
         # Signal 1: in-game kill streak announcement banner
         (
             f'"{player_name} is on a killing spree" OR "{player_name} is dominating" '
-            f'OR "{player_name} rampage" kill streak banner Dota 2 announcement',
+            f'OR "{player_name} rampage" kill streak banner Dota 2 announcement{hero_context}',
             ["visual", "audio", "transcription"],
             6,
         ),
         # Signal 2: excited caster positive mention
         (
             f"caster commentator shoutout {player_name} amazing incredible insane "
-            f"Dota 2 broadcast excited crowd",
+            f"Dota 2 broadcast excited crowd focus: {player_name}{hero_context}",
             ["audio", "transcription"],
             6,
         ),
-        # Signal 3: kill streak visual — red flash, kill feed, streak icon
+        # Signal 3: kill streak visual — player specific
         (
-            f"Dota 2 {streak_labels} kill streak red screen flash kill feed "
-            f"multi kill rampage animation",
+            f'Dota 2 {streak_labels} kill streak "{player_name}"{hero_context} red screen flash '
+            f'multi kill rampage animation kill feed',
             ["visual", "audio"],
             6,
         ),
@@ -140,7 +150,7 @@ def discover_discovery_first(
     for clip in candidate_clips:
         analysis_start = time.time()
         analysis = tl_client.analyze_clip(
-            clip["video_id"], clip["start"], clip["end"], target_player=player_name
+            clip["video_id"], clip["start"], clip["end"], target_player=player_name, target_hero=hero_name
         )
         analysis_duration = int(time.time() - analysis_start)
         extracted_name = analysis.get("player_name")
@@ -150,15 +160,10 @@ def discover_discovery_first(
         if extracted_name and not _name_matches(extracted_name, player_name):
             continue
 
-        streak_tier = analysis.get("streak_tier")
-        excitement = float(analysis.get("excitement_score", 5.0))
-        if streak_tier:
-            tier_index = next(
-                (i for i, t in enumerate(KILL_STREAK_TIERS) if t in (streak_tier or "").lower()),
-                -1,
-            )
-            if tier_index >= 0:
-                excitement = min(10.0, excitement + 0.25 * (tier_index + 1))
+        excitement = _apply_streak_boost(
+            float(analysis.get("excitement_score", 5.0)),
+            analysis.get("streak_tier"),
+        )
 
         highlights.append(Highlight(
             video_id=clip["video_id"],
@@ -196,7 +201,6 @@ def merge_and_deduplicate(
         last = merged[-1]
         if (current.video_id == last.video_id and
                 current.start < last.end + overlap_threshold):
-            # Overlapping — keep whichever has higher excitement
             if current.excitement_score > last.excitement_score:
                 merged[-1] = current
         else:

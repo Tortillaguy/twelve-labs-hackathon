@@ -163,91 +163,36 @@ def main():
                 hero_id=p["hero_id"],
                 clip_count=player_clips,
             ))
-
-    # 4. Integrate with EXISTING player data and update leaderboard
-    print("\n[sync] Finalizing Leaderboard update...")
-    
-    # Read old players to merge
-    ranked_input = []
-    # All players we have data for
-    all_account_ids = set(all_player_highlights.keys())
-    # Add accounts from existing leaderboard
-    if lb:
-        for p in lb.players:
-            all_account_ids.add(p.account_id)
-
-    for aid in all_account_ids:
-        # Load existing if any
-        existing_pd = cache.read_player(aid)
-        
-        # New highlights for this sync
-        new_h = all_player_highlights.get(aid, [])
-        # Merge with existing
-        h_merged = []
-        if existing_pd:
-            h_merged.extend(existing_pd.highlights)
-        h_merged.extend(new_h)
-        h_dedup = merge_and_deduplicate(h_merged)
-        
-        # Merge match summaries
-        m_summaries = []
-        if existing_pd:
-            m_summaries.extend(existing_pd.recent_matches)
-        if aid in player_match_summaries:
-            m_summaries.extend(player_match_summaries[aid])
-        
-        # Deduplicate matches by ID
-        m_dedup = {m.match_id: m for m in m_summaries}.values()
-        m_list = sorted(m_dedup, key=lambda x: x.match_id, reverse=True)
-
-        # Aggregate stats (dummy/simple for now or use actual aggregate_player_stats if we had all MatchDetails)
-        # For simplicity in this script, we'll try to re-fetch or use old stats
-        name = "Unknown"
-        team = "Unknown"
-        if aid in player_match_summaries:
-            # Get from recent fetch
-            name = next((p.get("personaname") or p.get("name") or "Player" 
-                         for p in raw.get("players", []) if p.get("account_id") == aid), "Player")
-        elif existing_pd:
-            name = existing_pd.player.name
-            team = existing_pd.player.team
             
-        # Re-calc stats if we had match_details_agg. 
-        # But we only have match_details_agg for NEW matches.
-        # So we should ideally have a full list of MatchDetails.
-        # For this hackathon seed, let's just use aggregate_player_stats with what we have.
-        
-        stats = aggregate_player_stats(match_details_agg, aid, name, team)
-        # Note: stats only reflects NEW matches. This is a BUG in current scripts too.
-        # But we'll follow the pattern for now, or improve it.
-        
-        ranked_input.append({"stats": stats, "highlights": h_dedup, "match_summaries": m_list})
-
-    final_ranked = rank_players(ranked_input)
-    # Update files
-    for entry in ranked_input:
-        aid = entry["stats"].account_id
-        # Find ranked info
-        p_rank = next((p for p in final_ranked if p.account_id == aid), None)
-        if p_rank:
-            p_detail = PlayerDetail(
-                player=p_rank,
-                recent_matches=entry["match_summaries"],
-                highlights=entry["highlights"]
+            # Incremental Save for this player
+            existing_pd = cache.read_player(aid)
+            h_merged = (existing_pd.highlights if existing_pd else []) + all_player_highlights[aid]
+            h_dedup = merge_and_deduplicate(h_merged)
+            
+            m_summaries = (existing_pd.recent_matches if existing_pd else []) + [player_match_summaries[aid][-1]]
+            m_dedup = {m.match_id: m for m in m_summaries}.values()
+            m_list = sorted(m_dedup, key=lambda x: x.match_id, reverse=True)
+            
+            # Simple stats update for now
+            from backend.models import PlayerStats
+            p_stats = aggregate_player_stats([m_detail], aid, name, team_name) if not existing_pd else existing_pd.player
+            # (Note: this is simplified, but ensures we at least have a record)
+            
+            lp_temp = PlayerDetail(
+                player=p_stats,
+                recent_matches=m_list,
+                highlights=h_dedup
             )
-            cache.write_player(aid, p_detail)
-    
-    from backend.models import LeaderboardResponse
-    lb_new = LeaderboardResponse(
-        competition="ESL One Birmingham 2026",
-        total_matches=len(captured_matches) + len(to_process),
-        total_teams=len(set(p.team for p in final_ranked)),
-        total_highlights=sum(p.highlight_count for p in final_ranked),
-        avg_kda_top10=round(sum(p.avg_kda_ratio for p in final_ranked[:10]) / max(1, len(final_ranked[:10])), 2),
-        players=final_ranked
-    )
-    cache.write_leaderboard(lb_new)
-    print(f"[sync] Done! Leaderboard updated with {len(to_process)} more matches.")
+            cache.write_player(aid, lp_temp)
+
+        # Update leaderboard count after each match
+        lb_curr = read_leaderboard()
+        if lb_curr:
+            lb_curr.total_matches += 1
+            # Recalculate if we have ranks, but at least we have the count
+            cache.write_leaderboard(lb_curr)
+            
+        print(f"[sync] Match {mid} processed and saved incrementally.")
 
 if __name__ == "__main__":
     main()

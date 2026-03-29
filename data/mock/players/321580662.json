@@ -10,7 +10,12 @@
     "win_rate": 0.8,
     "ai_impact_score": 92.4,
     "highlight_count": 5,
-    "top_heroes": [1, 94, 11]
+    "top_heroes": [
+      1,
+      94,
+      11
+    ],
+    "avatar_url": "https://avatars.steamstatic.com/f3e9f90e016d6326e35f6a62a6218eeb5238dbaa_full.jpg"
   },
   "recent_matches": [
     {

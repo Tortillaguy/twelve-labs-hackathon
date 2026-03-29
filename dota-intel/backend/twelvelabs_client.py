@@ -197,7 +197,8 @@ class TwelveLabsClient:
                     print(f"[tl-search] 429 Rate Limited. Waiting {wait_time}s... (attempt {i+1}/{retries})")
                     time.sleep(wait_time)
                 else:
-                    raise e
+                    print(f"[tl-search] All retries failed for query '{query}'. Returning empty list.")
+                    return []
         return []
 
     def calibrate_game_start(self, video_id: str, first_blood_time: int = 0) -> float:
@@ -236,20 +237,23 @@ class TwelveLabsClient:
             print(f"[tl] Warning in calibrate_game_start (Horn): {e}")
         return 600.0
 
-    def analyze_clip(self, video_id: str, start: float, end: float, target_player: str = None) -> dict:
+    def analyze_clip(self, video_id: str, start: float, end: float, target_player: str = None, target_hero: str = None, retries: int = 5) -> dict:
         """
         Ask Pegasus to classify and score a clip at [start, end] seconds.
         Uses raw HTTP to /analyze (v1.3 NDJSON streaming endpoint).
-        If target_player is provided, Pegasus is asked to focus on that player
-        and check for in-game kill streak announcement banners mentioning them.
+        If target_player/hero is provided, Pegasus is asked to focus on that specific entity.
+        Includes exponential backoff for 429 Rate Limit errors.
         """
+        focus_entity = f"'{target_player}' ({target_hero})" if target_player and target_hero else (f"'{target_player}'" if target_player else (f"'{target_hero}'" if target_hero else "the player"))
+
         player_context = (
-            f" The focus player is '{target_player}'. "
+            f" The focus of this clip must be the player {focus_entity}. "
             f"Check whether in-game banners or the caster explicitly announce a kill streak "
-            f"for '{target_player}' (e.g. '[{target_player}] is on a killing spree', "
-            f"'[{target_player}] is dominating', '[{target_player}] RAMPAGE!'). "
-            f"Also note if the caster mentions '{target_player}' positively."
-        ) if target_player else ""
+            f"for {focus_entity} (e.g. '[{target_player or 'Player'}] is on a killing spree', "
+            f"'[{target_player or 'Player'}] is dominating', '[{target_player or 'Player'}] RAMPAGE!'). "
+            f"Identify the hero being played by this person in the bottom-left hero portrait or top status bar. "
+            f"Note if the caster mentions {focus_entity} positively or if they perform an influential play."
+        )
 
         prompt = (
             f"Analyze the moment from {start:.0f} to {end:.0f} seconds in this "
@@ -260,29 +264,41 @@ class TwelveLabsClient:
             f"streak_tier (the kill streak tier announced in-game or by casters, e.g. "
             f"'killing spree', 'dominating', 'mega kill', 'ultra kill', 'rampage', "
             f"'godlike', 'beyond godlike', 'wicked sick' — or null if none), "
-            f"description (one sentence focusing on what {target_player or 'the player'} did), "
-            f"player_name (the player name spoken by casters or shown in an in-game banner, or null), "
+            f"description (one sentence focusing on what {focus_entity} did), "
+            f"player_name (the specific player name spoken by casters or shown as the killer in an in-game banner, or null), "
+            f"hero_name (the name of the hero being played by the focused player, or null), "
             f"ai_insight (one sentence: why this moment matters strategically or emotionally "
             f"in a Dota 2 broadcast — vivid, specific, max 20 words; null if unclear)."
         )
-        try:
-            r = httpx.post(
-                f"{self.BASE_URL}/analyze",
-                headers={"x-api-key": self._api_key, "Content-Type": "application/json"},
-                json={"video_id": video_id, "prompt": prompt, "temperature": 0.2},
-                timeout=120,
-            )
-            r.raise_for_status()
-            full_text = ""
-            for line in r.text.strip().split("\n"):
-                event = json.loads(line)
-                if event.get("event_type") == "text_generation":
-                    full_text += event.get("text", "")
-            if "{" in full_text and "}" in full_text:
-                json_part = full_text[full_text.find("{"):full_text.rfind("}")+1]
-                return json.loads(json_part)
-            return {"description": full_text.strip(), "play_type": "TEAMFIGHT", "excitement_score": 7.0, "ai_insight": None}
-        except Exception as e:
-            print(f"[tl] Warning in analyze_clip: {e}")
-            return {"description": "Highlight moment", "play_type": "TEAMFIGHT", "excitement_score": 5.0, "ai_insight": None}
+
+        for i in range(retries):
+            try:
+                r = httpx.post(
+                    f"{self.BASE_URL}/analyze",
+                    headers={"x-api-key": self._api_key, "Content-Type": "application/json"},
+                    json={"video_id": video_id, "prompt": prompt, "temperature": 0.2},
+                    timeout=120,
+                )
+                r.raise_for_status()
+                full_text = ""
+                for line in r.text.strip().split("\n"):
+                    event = json.loads(line)
+                    if event.get("event_type") == "text_generation":
+                        full_text += event.get("text", "")
+                if "{" in full_text and "}" in full_text:
+                    json_part = full_text[full_text.find("{"):full_text.rfind("}")+1]
+                    return json.loads(json_part)
+                return {"description": full_text.strip(), "play_type": "TEAMFIGHT", "excitement_score": 7.0, "ai_insight": None}
+            except httpx.HTTPStatusError as e:
+                if e.response.status_code == 429 and i < retries - 1:
+                    wait_time = 30 * (i + 1)
+                    print(f"[tl-analyze] 429 Rate Limited. Waiting {wait_time}s... (attempt {i+1}/{retries})")
+                    time.sleep(wait_time)
+                else:
+                    print(f"[tl] Warning in analyze_clip: {e}")
+                    return {"description": "Highlight moment", "play_type": "TEAMFIGHT", "excitement_score": 5.0, "ai_insight": None}
+            except Exception as e:
+                print(f"[tl] Warning in analyze_clip: {e}")
+                return {"description": "Highlight moment", "play_type": "TEAMFIGHT", "excitement_score": 5.0, "ai_insight": None}
+        return {"description": "Highlight moment", "play_type": "TEAMFIGHT", "excitement_score": 5.0, "ai_insight": None}
 

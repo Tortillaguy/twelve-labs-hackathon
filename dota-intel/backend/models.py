@@ -46,6 +46,7 @@ class Highlight(BaseModel):
     player_name: Optional[str] = None
     match_id: Optional[int] = None
     opponent: Optional[str] = None
+    hls_url: Optional[str] = None
     thumbnail_url: Optional[str] = None
     ai_insight: Optional[str] = None
     surfaced_delta_seconds: Optional[int] = None
@@ -62,6 +63,7 @@ class RankedPlayer(BaseModel):
     ai_impact_score: float
     highlight_count: int
     top_heroes: list[int]
+    avatar_url: Optional[str] = None
 
 class MatchSummary(BaseModel):
     match_id: int

@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 from backend.models import LeaderboardResponse, PlayerDetail
 
-DATA_DIR = Path(__file__).parent.parent.parent / "data"
+DATA_DIR = Path(__file__).parent.parent / "data"
 MOCK_DIR = DATA_DIR / "mock"
 
 def write_leaderboard(response: LeaderboardResponse) -> None:
@@ -34,3 +34,27 @@ def read_player(account_id: int, demo: bool = False) -> PlayerDetail | None:
             return PlayerDetail.model_validate_json(fallback_path.read_text())
         return None
     return PlayerDetail.model_validate_json(path.read_text())
+
+def write_video_info_cache(video_id: str, info: dict) -> None:
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    cache_path = DATA_DIR / "video_info_cache.json"
+    cache = {}
+    if cache_path.exists():
+        try:
+            cache = json.loads(cache_path.read_text())
+        except:
+            cache = {}
+    cache[video_id] = info
+    import time
+    cache[video_id]["cached_at"] = time.time()
+    cache_path.write_text(json.dumps(cache, indent=2))
+
+def read_video_info_cache(video_id: str) -> dict | None:
+    cache_path = DATA_DIR / "video_info_cache.json"
+    if not cache_path.exists():
+        return None
+    try:
+        cache = json.loads(cache_path.read_text())
+        return cache.get(video_id)
+    except:
+        return None
