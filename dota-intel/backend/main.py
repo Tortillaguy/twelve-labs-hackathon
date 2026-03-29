@@ -87,6 +87,11 @@ def search_clips(q: str, limit: int = 10):
                 video_cache[vid] = {}
         clip["hls_url"] = video_cache[vid].get("hls_url")
         clip["video_thumbnail_url"] = video_cache[vid].get("thumbnail_url")
+    # Enrich each clip with a Pegasus-generated play summary
+    for clip in clips:
+        clip["play_summary"] = tl.summarize_clip(
+            clip["video_id"], clip["start"], clip["end"]
+        )
     return {"clips": clips}
 
 @app.post("/api/discover-highlights")

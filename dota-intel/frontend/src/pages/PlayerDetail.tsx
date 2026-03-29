@@ -111,6 +111,7 @@ interface SearchClip {
   end: number
   score: number | null
   transcription: string | null
+  play_summary: string | null
   thumbnail_url: string | null
   hls_url: string | null
   video_thumbnail_url: string | null
@@ -602,9 +603,9 @@ function SearchClipCard({ clip, onPlay, onCopy, accountId, demoMode }: {
             AI MATCH
           </span>
         </div>
-        {clip.transcription && (
+        {clip.play_summary && (
           <div className="text-xs text-[#E8E8F0] leading-tight line-clamp-2">
-            "{clip.transcription}"
+            {clip.play_summary}
           </div>
         )}
         <div className="flex items-center justify-between">

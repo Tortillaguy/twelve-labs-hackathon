@@ -1,17 +1,92 @@
 {
   "player": {
-    "rank": 1,
+    "rank": 6,
     "account_id": 321580662,
     "name": "Yatoro",
     "team": "Team Spirit",
-    "kda": "0 / 0 / 0",
-    "avg_kda_ratio": 0.0,
-    "avg_gpm": 0.0,
-    "win_rate": 0.0,
-    "ai_impact_score": 0.0,
-    "highlight_count": 0,
-    "top_heroes": []
+    "kda": "7 / 3 / 5",
+    "avg_kda_ratio": 4.0,
+    "avg_gpm": 612.0,
+    "win_rate": 0.67,
+    "ai_impact_score": 55.2,
+    "highlight_count": 3,
+    "top_heroes": [89, 94, 1],
+    "avatar_url": null
   },
-  "recent_matches": [],
-  "highlights": []
+  "recent_matches": [
+    {
+      "match_id": 8748176080,
+      "opponent": "Xtreme Gaming",
+      "won": false,
+      "duration_str": "33:57",
+      "kills": 5,
+      "deaths": 4,
+      "assists": 3,
+      "gpm": 567,
+      "hero_id": 89,
+      "clip_count": 1
+    },
+    {
+      "match_id": 8747660830,
+      "opponent": "OG",
+      "won": true,
+      "duration_str": "29:44",
+      "kills": 9,
+      "deaths": 2,
+      "assists": 6,
+      "gpm": 678,
+      "hero_id": 94,
+      "clip_count": 1
+    },
+    {
+      "match_id": 8747501220,
+      "opponent": "Nigma Galaxy",
+      "won": true,
+      "duration_str": "41:15",
+      "kills": 7,
+      "deaths": 3,
+      "assists": 6,
+      "gpm": 591,
+      "hero_id": 1,
+      "clip_count": 1
+    }
+  ],
+  "highlights": [
+    {
+      "video_id": "69c88d43c704e7c92b858da7",
+      "start": 1480.0,
+      "end": 1488.0,
+      "play_type": "TEAMFIGHT",
+      "excitement_score": 8.0,
+      "description": "Naga Siren Song of the Siren into Riptide combo! Yatoro resets the fight perfectly — Xtreme Gaming forced to scatter!",
+      "player_name": "Yatoro",
+      "match_id": 8748176080,
+      "opponent": "Xtreme Gaming",
+      "thumbnail_url": null
+    },
+    {
+      "video_id": "69c8a3349639891c461300b9",
+      "start": 1050.0,
+      "end": 1058.0,
+      "play_type": "RAMPAGE",
+      "excitement_score": 9.5,
+      "description": "Medusa pops Stone Gaze! Three OG heroes turned to stone! Yatoro with the Split Shot cleans up — RAMPAGE! Team Spirit are on fire!",
+      "player_name": "Yatoro",
+      "match_id": 8747660830,
+      "opponent": "OG",
+      "thumbnail_url": null
+    },
+    {
+      "video_id": "69c8a3349639891c461300b9",
+      "start": 2250.0,
+      "end": 2258.0,
+      "play_type": "CLUTCH",
+      "excitement_score": 8.5,
+      "description": "Anti-Mage blink dodging the Sacred Arrow! Mana Void finishes Miracle- with zero mana — Yatoro with the perfect read!",
+      "player_name": "Yatoro",
+      "match_id": 8747501220,
+      "opponent": "Nigma Galaxy",
+      "thumbnail_url": null
+    }
+  ]
 }

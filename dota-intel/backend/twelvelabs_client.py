@@ -237,6 +237,46 @@ class TwelveLabsClient:
             print(f"[tl] Warning in calibrate_game_start (Horn): {e}")
         return 600.0
 
+    def summarize_clip(self, video_id: str, start: float, end: float, retries: int = 3) -> str | None:
+        """
+        Ask Pegasus for a short plain-text summary of the play happening in a clip.
+        Returns a single sentence or None on failure.
+        """
+        prompt = (
+            f"In one sentence (max 15 words), describe the key Dota 2 play or moment "
+            f"happening from {start:.0f}s to {end:.0f}s in this broadcast. "
+            f"Focus on what action is taking place (e.g. team fight, gank, Roshan kill, "
+            f"tower push, pick-off). Do not quote casters. Just describe the play."
+        )
+        for i in range(retries):
+            try:
+                r = httpx.post(
+                    f"{self.BASE_URL}/analyze",
+                    headers={"x-api-key": self._api_key, "Content-Type": "application/json"},
+                    json={"video_id": video_id, "prompt": prompt, "temperature": 0.2},
+                    timeout=60,
+                )
+                r.raise_for_status()
+                full_text = ""
+                for line in r.text.strip().split("\n"):
+                    event = json.loads(line)
+                    if event.get("event_type") == "text_generation":
+                        full_text += event.get("text", "")
+                summary = full_text.strip().strip('"')
+                return summary if summary else None
+            except httpx.HTTPStatusError as e:
+                if e.response.status_code == 429 and i < retries - 1:
+                    wait_time = 30 * (i + 1)
+                    print(f"[tl-summarize] 429 Rate Limited. Waiting {wait_time}s... (attempt {i+1}/{retries})")
+                    time.sleep(wait_time)
+                else:
+                    print(f"[tl-summarize] Warning: {e}")
+                    return None
+            except Exception as e:
+                print(f"[tl-summarize] Warning: {e}")
+                return None
+        return None
+
     def analyze_clip(self, video_id: str, start: float, end: float, target_player: str = None, target_hero: str = None, retries: int = 5) -> dict:
         """
         Ask Pegasus to classify and score a clip at [start, end] seconds.

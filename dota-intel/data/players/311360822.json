@@ -1,0 +1,104 @@
+{
+  "player": {
+    "rank": 5,
+    "account_id": 311360822,
+    "name": "Ame",
+    "team": "Xtreme Gaming",
+    "kda": "9 / 2 / 7",
+    "avg_kda_ratio": 8.0,
+    "avg_gpm": 687.0,
+    "win_rate": 0.67,
+    "ai_impact_score": 57.8,
+    "highlight_count": 4,
+    "top_heroes": [41, 109, 48],
+    "avatar_url": null
+  },
+  "recent_matches": [
+    {
+      "match_id": 8748176080,
+      "opponent": "Team Spirit",
+      "won": true,
+      "duration_str": "33:57",
+      "kills": 12,
+      "deaths": 1,
+      "assists": 8,
+      "gpm": 756,
+      "hero_id": 41,
+      "clip_count": 2
+    },
+    {
+      "match_id": 8747660830,
+      "opponent": "Tundra Esports",
+      "won": true,
+      "duration_str": "44:08",
+      "kills": 8,
+      "deaths": 2,
+      "assists": 9,
+      "gpm": 698,
+      "hero_id": 109,
+      "clip_count": 1
+    },
+    {
+      "match_id": 8747501220,
+      "opponent": "Team Falcons",
+      "won": false,
+      "duration_str": "38:22",
+      "kills": 7,
+      "deaths": 3,
+      "assists": 4,
+      "gpm": 607,
+      "hero_id": 48,
+      "clip_count": 1
+    }
+  ],
+  "highlights": [
+    {
+      "video_id": "69c88d43c704e7c92b858da7",
+      "start": 1120.0,
+      "end": 1128.0,
+      "play_type": "RAMPAGE",
+      "excitement_score": 9.5,
+      "description": "Ame with the Chronosphere catches three heroes inside! Triple kill turning into a RAMPAGE! The crowd goes absolutely wild!",
+      "player_name": "Ame",
+      "match_id": 8748176080,
+      "opponent": "Team Spirit",
+      "thumbnail_url": null
+    },
+    {
+      "video_id": "69c88d43c704e7c92b858da7",
+      "start": 1890.0,
+      "end": 1897.0,
+      "play_type": "TEAMFIGHT",
+      "excitement_score": 8.0,
+      "description": "Faceless Void blinking in from the fog, perfect Chrono onto the backlines. Ame cleaning up two supports instantly.",
+      "player_name": "Ame",
+      "match_id": 8748176080,
+      "opponent": "Team Spirit",
+      "thumbnail_url": null
+    },
+    {
+      "video_id": "69c8a3349639891c461300b9",
+      "start": 780.0,
+      "end": 788.0,
+      "play_type": "CLUTCH",
+      "excitement_score": 8.5,
+      "description": "Terrorblade reflection saving Ame at 100 HP! He sunders the Spirit Breaker and turns it completely around!",
+      "player_name": "Ame",
+      "match_id": 8747660830,
+      "opponent": "Tundra Esports",
+      "thumbnail_url": null
+    },
+    {
+      "video_id": "69c8a3349639891c461300b9",
+      "start": 2100.0,
+      "end": 2107.0,
+      "play_type": "OBJECTIVE",
+      "excitement_score": 7.0,
+      "description": "Luna with the Aegis pushing high ground. Eclipse drops and the base falls. GG called moments later.",
+      "player_name": "Ame",
+      "match_id": 8747501220,
+      "opponent": "Team Falcons",
+      "thumbnail_url": null
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "player": {
+    "rank": 10,
+    "account_id": 105248644,
+    "name": "Miposhka",
+    "team": "Team Spirit",
+    "kda": "1 / 3 / 14",
+    "avg_kda_ratio": 5.0,
+    "avg_gpm": 287.0,
+    "win_rate": 0.67,
+    "ai_impact_score": 47.3,
+    "highlight_count": 2,
+    "top_heroes": [30, 64, 50],
+    "avatar_url": null
+  },
+  "recent_matches": [
+    {
+      "match_id": 8748176080,
+      "opponent": "Xtreme Gaming",
+      "won": false,
+      "duration_str": "33:57",
+      "kills": 0,
+      "deaths": 5,
+      "assists": 12,
+      "gpm": 245,
+      "hero_id": 30,
+      "clip_count": 1
+    },
+    {
+      "match_id": 8747660830,
+      "opponent": "OG",
+      "won": true,
+      "duration_str": "29:44",
+      "kills": 1,
+      "deaths": 2,
+      "assists": 18,
+      "gpm": 298,
+      "hero_id": 64,
+      "clip_count": 1
+    },
+    {
+      "match_id": 8747501220,
+      "opponent": "Nigma Galaxy",
+      "won": true,
+      "duration_str": "41:15",
+      "kills": 2,
+      "deaths": 2,
+      "assists": 12,
+      "gpm": 318,
+      "hero_id": 50,
+      "clip_count": 0
+    }
+  ],
+  "highlights": [
+    {
+      "video_id": "69c88d43c704e7c92b858da7",
+      "start": 930.0,
+      "end": 937.0,
+      "play_type": "CLUTCH",
+      "excitement_score": 8.0,
+      "description": "Miposhka with the clutch Maledict on Ame just before dying — the tick damage finishes the Faceless Void seconds later!",
+      "player_name": "Miposhka",
+      "match_id": 8748176080,
+      "opponent": "Xtreme Gaming",
+      "thumbnail_url": null
+    },
+    {
+      "video_id": "69c8a3349639891c461300b9",
+      "start": 555.0,
+      "end": 562.0,
+      "play_type": "TEAMFIGHT",
+      "excitement_score": 7.5,
+      "description": "Jakiro Ice Path stuns the entire OG frontline! Dual Breath into Macropyre — the zone control is immaculate from Miposhka.",
+      "player_name": "Miposhka",
+      "match_id": 8747660830,
+      "opponent": "OG",
+      "thumbnail_url": null
+    }
+  ]
+}

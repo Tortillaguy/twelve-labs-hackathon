@@ -1,0 +1,92 @@
+{
+  "player": {
+    "rank": 9,
+    "account_id": 56933398,
+    "name": "Miracle-",
+    "team": "Nigma Galaxy",
+    "kda": "8 / 4 / 3",
+    "avg_kda_ratio": 2.75,
+    "avg_gpm": 578.0,
+    "win_rate": 0.33,
+    "ai_impact_score": 48.9,
+    "highlight_count": 3,
+    "top_heroes": [74, 17, 46],
+    "avatar_url": null
+  },
+  "recent_matches": [
+    {
+      "match_id": 8748176080,
+      "opponent": "Tundra Esports",
+      "won": false,
+      "duration_str": "42:30",
+      "kills": 10,
+      "deaths": 3,
+      "assists": 4,
+      "gpm": 621,
+      "hero_id": 74,
+      "clip_count": 2
+    },
+    {
+      "match_id": 8747660830,
+      "opponent": "Team Falcons",
+      "won": false,
+      "duration_str": "35:18",
+      "kills": 6,
+      "deaths": 5,
+      "assists": 2,
+      "gpm": 534,
+      "hero_id": 17,
+      "clip_count": 1
+    },
+    {
+      "match_id": 8747501220,
+      "opponent": "Team Spirit",
+      "won": false,
+      "duration_str": "41:15",
+      "kills": 8,
+      "deaths": 4,
+      "assists": 3,
+      "gpm": 579,
+      "hero_id": 46,
+      "clip_count": 0
+    }
+  ],
+  "highlights": [
+    {
+      "video_id": "69c88d43c704e7c92b858da7",
+      "start": 1340.0,
+      "end": 1348.0,
+      "play_type": "GODLIKE",
+      "excitement_score": 9.0,
+      "description": "Miracle- Invoker lands the Tornado into EMP into Meteor into Deafening Blast combo — the full piano! Four heroes melted instantly!",
+      "player_name": "Miracle-",
+      "match_id": 8748176080,
+      "opponent": "Tundra Esports",
+      "thumbnail_url": null
+    },
+    {
+      "video_id": "69c88d43c704e7c92b858da7",
+      "start": 2050.0,
+      "end": 2057.0,
+      "play_type": "CLUTCH",
+      "excitement_score": 8.5,
+      "description": "1v3 and Miracle- survives! Ghost Walk into Cold Snap on the pursuing Storm Spirit — turns it around for a solo kill despite being 200 HP!",
+      "player_name": "Miracle-",
+      "match_id": 8748176080,
+      "opponent": "Tundra Esports",
+      "thumbnail_url": null
+    },
+    {
+      "video_id": "69c8a3349639891c461300b9",
+      "start": 1580.0,
+      "end": 1588.0,
+      "play_type": "TEAMFIGHT",
+      "excitement_score": 7.5,
+      "description": "Storm Spirit ball lightning from fountain to Roshan pit! Miracle- trying to steal the Aegis but SumaiL shuts him down!",
+      "player_name": "Miracle-",
+      "match_id": 8747660830,
+      "opponent": "Team Falcons",
+      "thumbnail_url": null
+    }
+  ]
+}

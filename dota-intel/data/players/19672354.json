@@ -1,0 +1,92 @@
+{
+  "player": {
+    "rank": 14,
+    "account_id": 19672354,
+    "name": "w33",
+    "team": "Nigma Galaxy",
+    "kda": "4 / 4 / 5",
+    "avg_kda_ratio": 2.25,
+    "avg_gpm": 445.0,
+    "win_rate": 0.33,
+    "ai_impact_score": 38.9,
+    "highlight_count": 3,
+    "top_heroes": [82, 52, 13],
+    "avatar_url": null
+  },
+  "recent_matches": [
+    {
+      "match_id": 8748176080,
+      "opponent": "Tundra Esports",
+      "won": false,
+      "duration_str": "42:30",
+      "kills": 3,
+      "deaths": 5,
+      "assists": 6,
+      "gpm": 412,
+      "hero_id": 52,
+      "clip_count": 1
+    },
+    {
+      "match_id": 8747660830,
+      "opponent": "Team Falcons",
+      "won": false,
+      "duration_str": "35:18",
+      "kills": 5,
+      "deaths": 4,
+      "assists": 3,
+      "gpm": 478,
+      "hero_id": 82,
+      "clip_count": 2
+    },
+    {
+      "match_id": 8747501220,
+      "opponent": "Team Spirit",
+      "won": false,
+      "duration_str": "41:15",
+      "kills": 4,
+      "deaths": 3,
+      "assists": 6,
+      "gpm": 445,
+      "hero_id": 13,
+      "clip_count": 0
+    }
+  ],
+  "highlights": [
+    {
+      "video_id": "69c88d43c704e7c92b858da7",
+      "start": 1060.0,
+      "end": 1068.0,
+      "play_type": "CLUTCH",
+      "excitement_score": 8.0,
+      "description": "Leshrac Pulse Nova shredding through the team! w33 pops BKB and runs at three heroes — Double Kill before Pure~ shuts him down!",
+      "player_name": "w33",
+      "match_id": 8748176080,
+      "opponent": "Tundra Esports",
+      "thumbnail_url": null
+    },
+    {
+      "video_id": "69c8a3349639891c461300b9",
+      "start": 890.0,
+      "end": 898.0,
+      "play_type": "TEAMFIGHT",
+      "excitement_score": 8.5,
+      "description": "w33 Meepo with the poof combo! Five Meepos blink-poof onto Cr1t — instant deletion! But Team Falcons rally and win the fight!",
+      "player_name": "w33",
+      "match_id": 8747660830,
+      "opponent": "Team Falcons",
+      "thumbnail_url": null
+    },
+    {
+      "video_id": "69c8a3349639891c461300b9",
+      "start": 1720.0,
+      "end": 1728.0,
+      "play_type": "CLUTCH",
+      "excitement_score": 7.5,
+      "description": "Meepo net catches SumaiL mid-blink! w33 tries to solo kill but the QoP damage is too much. Close one!",
+      "player_name": "w33",
+      "match_id": 8747660830,
+      "opponent": "Team Falcons",
+      "thumbnail_url": null
+    }
+  ]
+}

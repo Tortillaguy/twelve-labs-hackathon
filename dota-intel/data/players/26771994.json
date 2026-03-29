@@ -1,0 +1,68 @@
+{
+  "player": {
+    "rank": 13,
+    "account_id": 26771994,
+    "name": "Ceb",
+    "team": "OG",
+    "kda": "3 / 3 / 9",
+    "avg_kda_ratio": 4.0,
+    "avg_gpm": 378.0,
+    "win_rate": 0.5,
+    "ai_impact_score": 41.5,
+    "highlight_count": 2,
+    "top_heroes": [19, 103, 129],
+    "avatar_url": null
+  },
+  "recent_matches": [
+    {
+      "match_id": 8747660830,
+      "opponent": "Team Spirit",
+      "won": false,
+      "duration_str": "29:44",
+      "kills": 2,
+      "deaths": 4,
+      "assists": 7,
+      "gpm": 345,
+      "hero_id": 19,
+      "clip_count": 1
+    },
+    {
+      "match_id": 8747501220,
+      "opponent": "Team Zero",
+      "won": true,
+      "duration_str": "36:10",
+      "kills": 4,
+      "deaths": 2,
+      "assists": 11,
+      "gpm": 411,
+      "hero_id": 103,
+      "clip_count": 1
+    }
+  ],
+  "highlights": [
+    {
+      "video_id": "69c8a3349639891c461300b9",
+      "start": 700.0,
+      "end": 708.0,
+      "play_type": "TEAMFIGHT",
+      "excitement_score": 8.0,
+      "description": "Tiny toss-avalanche combo catches Collapse out of position! Ceb tosses him right back into the OG team — but Team Spirit still win the fight!",
+      "player_name": "Ceb",
+      "match_id": 8747660830,
+      "opponent": "Team Spirit",
+      "thumbnail_url": null
+    },
+    {
+      "video_id": "69c88d43c704e7c92b858da7",
+      "start": 1520.0,
+      "end": 1528.0,
+      "play_type": "OBJECTIVE",
+      "excitement_score": 7.5,
+      "description": "Elder Titan Echo Stomp into Earth Splitter! The sleep plus damage combo zones NothingToSay away from defending the tower. OG takes the rax!",
+      "player_name": "Ceb",
+      "match_id": 8747501220,
+      "opponent": "Team Zero",
+      "thumbnail_url": null
+    }
+  ]
+}

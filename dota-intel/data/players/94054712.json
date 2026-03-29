@@ -1,0 +1,80 @@
+{
+  "player": {
+    "rank": 11,
+    "account_id": 94054712,
+    "name": "SumaiL",
+    "team": "Team Falcons",
+    "kda": "5 / 2 / 6",
+    "avg_kda_ratio": 5.5,
+    "avg_gpm": 498.0,
+    "win_rate": 0.5,
+    "ai_impact_score": 45.7,
+    "highlight_count": 3,
+    "top_heroes": [17, 39, 25],
+    "avatar_url": null
+  },
+  "recent_matches": [
+    {
+      "match_id": 8748176080,
+      "opponent": "Xtreme Gaming",
+      "won": false,
+      "duration_str": "38:22",
+      "kills": 3,
+      "deaths": 3,
+      "assists": 5,
+      "gpm": 467,
+      "hero_id": 17,
+      "clip_count": 1
+    },
+    {
+      "match_id": 8747660830,
+      "opponent": "Nigma Galaxy",
+      "won": true,
+      "duration_str": "35:18",
+      "kills": 7,
+      "deaths": 1,
+      "assists": 7,
+      "gpm": 529,
+      "hero_id": 39,
+      "clip_count": 2
+    }
+  ],
+  "highlights": [
+    {
+      "video_id": "69c88d43c704e7c92b858da7",
+      "start": 1410.0,
+      "end": 1418.0,
+      "play_type": "TEAMFIGHT",
+      "excitement_score": 7.5,
+      "description": "Storm Spirit ball lightning across the entire river! SumaiL zips onto the backline and takes out both supports before they can react.",
+      "player_name": "SumaiL",
+      "match_id": 8748176080,
+      "opponent": "Xtreme Gaming",
+      "thumbnail_url": null
+    },
+    {
+      "video_id": "69c8a3349639891c461300b9",
+      "start": 1590.0,
+      "end": 1598.0,
+      "play_type": "GODLIKE",
+      "excitement_score": 9.0,
+      "description": "Queen of Pain Sonic Wave hits four! SumaiL blinks in for the cleanup — GODLIKE streak secured! The King is back!",
+      "player_name": "SumaiL",
+      "match_id": 8747660830,
+      "opponent": "Nigma Galaxy",
+      "thumbnail_url": null
+    },
+    {
+      "video_id": "69c8a3349639891c461300b9",
+      "start": 1850.0,
+      "end": 1857.0,
+      "play_type": "CLUTCH",
+      "excitement_score": 8.0,
+      "description": "Miracle- tries to gank SumaiL mid but QoP blinks the Sun Strike! Shadow Strike slows and the turn-kill is clean.",
+      "player_name": "SumaiL",
+      "match_id": 8747660830,
+      "opponent": "Nigma Galaxy",
+      "thumbnail_url": null
+    }
+  ]
+}
