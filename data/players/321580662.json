@@ -1,0 +1,17 @@
+{
+  "player": {
+    "rank": 1,
+    "account_id": 321580662,
+    "name": "Yatoro",
+    "team": "Team Spirit",
+    "kda": "0 / 0 / 0",
+    "avg_kda_ratio": 0.0,
+    "avg_gpm": 0.0,
+    "win_rate": 0.0,
+    "ai_impact_score": 0.0,
+    "highlight_count": 0,
+    "top_heroes": []
+  },
+  "recent_matches": [],
+  "highlights": []
+}

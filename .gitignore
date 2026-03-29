@@ -1,0 +1,24 @@
+# Video segments
+*.mp4
+data/segments/
+dota-intel/data/segments/
+
+# Dependencies
+node_modules/
+.venv/
+venv/
+
+# Environment
+.env
+.env.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build outputs
+dist/
+build/
+.agent/temp_exports/
+*.pyc
+__pycache__/

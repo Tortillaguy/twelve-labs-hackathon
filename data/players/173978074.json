@@ -1,0 +1,45 @@
+{
+  "player": {
+    "rank": 1,
+    "account_id": 173978074,
+    "name": "NothingToSay",
+    "team": "Radiant",
+    "kda": "5 / 1 / 7",
+    "avg_kda_ratio": 12.5,
+    "avg_gpm": 305.5,
+    "win_rate": 0.5,
+    "ai_impact_score": 59.1,
+    "highlight_count": 1,
+    "top_heroes": [
+      16
+    ]
+  },
+  "recent_matches": [
+    {
+      "match_id": 8748176080,
+      "opponent": "Enemy Team",
+      "won": true,
+      "duration_str": "33:57",
+      "kills": 11,
+      "deaths": 2,
+      "assists": 14,
+      "gpm": 611,
+      "hero_id": 16,
+      "clip_count": 1
+    }
+  ],
+  "highlights": [
+    {
+      "video_id": "69c88d43c704e7c92b858da7",
+      "start": 1553.0,
+      "end": 1560.0,
+      "play_type": "TEAMFIGHT",
+      "excitement_score": 7.0,
+      "description": "going for him. Silence comes out, but it's still too late. He's got all his spells off on the Sand King. And Satanic, he just cannot afford to get in",
+      "player_name": "NothingToSay",
+      "match_id": 8748176080,
+      "opponent": "Enemy Team",
+      "thumbnail_url": null
+    }
+  ]
+}

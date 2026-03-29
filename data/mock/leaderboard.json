@@ -1,0 +1,74 @@
+{
+  "competition": "ESL One Birmingham 2026",
+  "total_matches": 7,
+  "total_teams": 8,
+  "total_highlights": 24,
+  "avg_kda_top10": 18.5,
+  "players": [
+    {
+      "rank": 1,
+      "account_id": 321580662,
+      "name": "Yatoro",
+      "team": "Team Spirit",
+      "kda": "11 / 2 / 8",
+      "avg_kda_ratio": 9.5,
+      "avg_gpm": 785.0,
+      "win_rate": 0.8,
+      "ai_impact_score": 92.4,
+      "highlight_count": 5,
+      "top_heroes": [1, 94, 11]
+    },
+    {
+      "rank": 2,
+      "account_id": 125581247,
+      "name": "Ame",
+      "team": "Xtreme Gaming",
+      "kda": "9 / 1 / 6",
+      "avg_kda_ratio": 15.0,
+      "avg_gpm": 810.0,
+      "win_rate": 0.75,
+      "ai_impact_score": 88.7,
+      "highlight_count": 4,
+      "top_heroes": [10, 8, 12]
+    },
+    {
+      "rank": 3,
+      "account_id": 173978074,
+      "name": "NothingToSay",
+      "team": "Team Zero",
+      "kda": "8 / 3 / 12",
+      "avg_kda_ratio": 6.6,
+      "avg_gpm": 611.0,
+      "win_rate": 0.66,
+      "ai_impact_score": 84.1,
+      "highlight_count": 3,
+      "top_heroes": [16, 106, 17]
+    },
+    {
+      "rank": 4,
+      "account_id": 106869163,
+      "name": "Somnus",
+      "team": "Azure Ray",
+      "kda": "10 / 4 / 9",
+      "avg_kda_ratio": 4.75,
+      "avg_gpm": 645.0,
+      "win_rate": 0.6,
+      "ai_impact_score": 81.2,
+      "highlight_count": 4,
+      "top_heroes": [22, 11, 46]
+    },
+    {
+      "rank": 5,
+      "account_id": 331855530,
+      "name": "fucking ridiculous)",
+      "team": "Dire",
+      "kda": "8 / 0 / 5",
+      "avg_kda_ratio": 27.0,
+      "avg_gpm": 414.5,
+      "win_rate": 0.5,
+      "ai_impact_score": 66.9,
+      "highlight_count": 3,
+      "top_heroes": [49]
+    }
+  ]
+}

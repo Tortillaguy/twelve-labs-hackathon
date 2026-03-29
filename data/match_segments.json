@@ -1,0 +1,86 @@
+{
+  "8748176080": {
+    "match_id": 8748176080,
+    "stream_url": "https://www.twitch.tv/videos/2733778836",
+    "stream_start_unix": 1774695680,
+    "match_start_unix": 1774732675,
+    "offset_seconds": 36395,
+    "duration_seconds": 6600,
+    "segment_start_hhmmss": "10:06:35",
+    "segment_end_hhmmss": "11:56:35",
+    "radiant_team": null,
+    "dire_team": null
+  },
+  "8748080084": {
+    "match_id": 8748080084,
+    "stream_url": "https://www.twitch.tv/videos/2733778836",
+    "stream_start_unix": 1774695680,
+    "match_start_unix": 1774727699,
+    "offset_seconds": 31419,
+    "duration_seconds": 6600,
+    "segment_start_hhmmss": "08:43:39",
+    "segment_end_hhmmss": "10:33:39",
+    "radiant_team": null,
+    "dire_team": null
+  },
+  "8748008577": {
+    "match_id": 8748008577,
+    "stream_url": "https://www.twitch.tv/videos/2733778836",
+    "stream_start_unix": 1774695680,
+    "match_start_unix": 1774724358,
+    "offset_seconds": 28078,
+    "duration_seconds": 6600,
+    "segment_start_hhmmss": "07:47:58",
+    "segment_end_hhmmss": "09:37:58",
+    "radiant_team": null,
+    "dire_team": null
+  },
+  "8747822091": {
+    "match_id": 8747822091,
+    "stream_url": "https://www.twitch.tv/videos/2733778836",
+    "stream_start_unix": 1774695680,
+    "match_start_unix": 1774716418,
+    "offset_seconds": 20138,
+    "duration_seconds": 6600,
+    "segment_start_hhmmss": "05:35:38",
+    "segment_end_hhmmss": "07:25:38",
+    "radiant_team": null,
+    "dire_team": null
+  },
+  "8747660830": {
+    "match_id": 8747660830,
+    "stream_url": "https://www.twitch.tv/videos/2733778836",
+    "stream_start_unix": 1774695680,
+    "match_start_unix": 1774711855,
+    "offset_seconds": 15575,
+    "duration_seconds": 6600,
+    "segment_start_hhmmss": "04:19:35",
+    "segment_end_hhmmss": "06:09:35",
+    "radiant_team": null,
+    "dire_team": null
+  },
+  "8747486863": {
+    "match_id": 8747486863,
+    "stream_url": "https://www.twitch.tv/videos/2733778836",
+    "stream_start_unix": 1774695680,
+    "match_start_unix": 1774703996,
+    "offset_seconds": 7716,
+    "duration_seconds": 6600,
+    "segment_start_hhmmss": "02:08:36",
+    "segment_end_hhmmss": "03:58:36",
+    "radiant_team": null,
+    "dire_team": null
+  },
+  "8747354565": {
+    "match_id": 8747354565,
+    "stream_url": "https://www.twitch.tv/videos/2733778836",
+    "stream_start_unix": 1774695680,
+    "match_start_unix": 1774699178,
+    "offset_seconds": 2898,
+    "duration_seconds": 6600,
+    "segment_start_hhmmss": "00:48:18",
+    "segment_end_hhmmss": "02:38:18",
+    "radiant_team": null,
+    "dire_team": null
+  }
+}

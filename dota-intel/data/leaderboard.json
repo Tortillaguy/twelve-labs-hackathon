@@ -1,0 +1,69 @@
+{
+  "competition": "ESL One Birmingham 2026",
+  "total_matches": 2,
+  "total_teams": 2,
+  "total_highlights": 8,
+  "avg_kda_top10": 20.88,
+  "players": [
+    {
+      "rank": 1,
+      "account_id": 331855530,
+      "name": "fucking ridiculous)",
+      "team": "Dire",
+      "kda": "8 / 0 / 5",
+      "avg_kda_ratio": 27.0,
+      "avg_gpm": 414.5,
+      "win_rate": 0.5,
+      "ai_impact_score": 66.9,
+      "highlight_count": 3,
+      "top_heroes": [
+        49
+      ]
+    },
+    {
+      "rank": 2,
+      "account_id": 93618577,
+      "name": "шапира-",
+      "team": "Dire",
+      "kda": "5 / 0 / 8",
+      "avg_kda_ratio": 27.0,
+      "avg_gpm": 353.0,
+      "win_rate": 0.5,
+      "ai_impact_score": 65.3,
+      "highlight_count": 3,
+      "top_heroes": [
+        106
+      ]
+    },
+    {
+      "rank": 3,
+      "account_id": 898754153,
+      "name": "念头通达",
+      "team": "Radiant",
+      "kda": "2 / 0 / 6",
+      "avg_kda_ratio": 17.0,
+      "avg_gpm": 401.5,
+      "win_rate": 0.5,
+      "ai_impact_score": 61.5,
+      "highlight_count": 1,
+      "top_heroes": [
+        10
+      ]
+    },
+    {
+      "rank": 4,
+      "account_id": 173978074,
+      "name": "NothingToSay",
+      "team": "Radiant",
+      "kda": "5 / 1 / 7",
+      "avg_kda_ratio": 12.5,
+      "avg_gpm": 305.5,
+      "win_rate": 0.5,
+      "ai_impact_score": 59.1,
+      "highlight_count": 1,
+      "top_heroes": [
+        16
+      ]
+    }
+  ]
+}
