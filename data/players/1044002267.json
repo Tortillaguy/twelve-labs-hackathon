@@ -1,0 +1,32 @@
+{
+  "player": {
+    "rank": 1,
+    "account_id": 1044002267,
+    "name": "destroy",
+    "team": "Dire",
+    "kda": "4 / 2 / 13",
+    "avg_kda_ratio": 8.5,
+    "avg_gpm": 574.0,
+    "win_rate": 0.0,
+    "ai_impact_score": 35.6,
+    "highlight_count": 0,
+    "top_heroes": [
+      114
+    ]
+  },
+  "recent_matches": [
+    {
+      "match_id": 8748080084,
+      "opponent": "Enemy Team",
+      "won": false,
+      "duration_str": "47:49",
+      "kills": 4,
+      "deaths": 2,
+      "assists": 13,
+      "gpm": 574,
+      "hero_id": 114,
+      "clip_count": 0
+    }
+  ],
+  "highlights": []
+}
