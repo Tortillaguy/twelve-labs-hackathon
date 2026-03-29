@@ -5,6 +5,8 @@ from backend.models import LeaderboardResponse, PlayerDetail
 
 DATA_DIR = Path(__file__).parent.parent / "data"
 MOCK_DIR = DATA_DIR / "mock"
+# Workspace root `data/video_info_cache.json` (used by some scripts) when dota-intel/data lacks a copy
+_REPO_ROOT_DATA = Path(__file__).resolve().parent.parent.parent / "data" / "video_info_cache.json"
 
 def write_leaderboard(response: LeaderboardResponse) -> None:
     DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -50,11 +52,14 @@ def write_video_info_cache(video_id: str, info: dict) -> None:
     cache_path.write_text(json.dumps(cache, indent=2))
 
 def read_video_info_cache(video_id: str) -> dict | None:
-    cache_path = DATA_DIR / "video_info_cache.json"
-    if not cache_path.exists():
-        return None
-    try:
-        cache = json.loads(cache_path.read_text())
-        return cache.get(video_id)
-    except:
-        return None
+    for cache_path in (DATA_DIR / "video_info_cache.json", _REPO_ROOT_DATA):
+        if not cache_path.exists():
+            continue
+        try:
+            cache = json.loads(cache_path.read_text())
+            hit = cache.get(video_id)
+            if hit is not None:
+                return hit
+        except Exception:
+            continue
+    return None
