@@ -16,6 +16,9 @@ venv/
 .DS_Store
 Thumbs.db
 
+# Worktrees
+.worktrees/
+
 # Build outputs
 dist/
 build/
