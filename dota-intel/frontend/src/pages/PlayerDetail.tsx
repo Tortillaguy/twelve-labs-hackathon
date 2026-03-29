@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
-import axios from 'axios'
+import api from '../utils/api'
 import Hls from 'hls.js'
 import { Sparkles, ArrowLeft, Mic2, Play, X, Video } from 'lucide-react'
 import Header from '../components/Header'
@@ -164,7 +164,7 @@ export default function PlayerDetail() {
     console.log(`[debug] Effect trigger: fetching /api/players/${accountId}`)
     setLoading(true)
     setError(null)
-    axios.get(`/api/players/${accountId}`, { params: { demo: demoMode } })
+    api.get(`/api/players/${accountId}`, { params: { demo: demoMode } })
       .then(res => {
         console.log('[debug] Player data received:', res.data)
         setData(res.data)
@@ -180,7 +180,7 @@ export default function PlayerDetail() {
   useEffect(() => {
     if (!data?.player.name) return
     setClipsLoading(true)
-    axios.get('/api/search', { params: { q: `${data.player.name} Dota 2 exciting play kill`, limit: 8 } })
+    api.get('/api/search', { params: { q: `${data.player.name} Dota 2 exciting play kill`, limit: 8 } })
       .then(res => setSearchClips(res.data.clips ?? []))
       .catch(err => console.error('Failed to search clips', err))
       .finally(() => setClipsLoading(false))

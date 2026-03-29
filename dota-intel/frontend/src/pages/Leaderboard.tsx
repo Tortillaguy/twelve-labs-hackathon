@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import api from '../utils/api'
 import { Swords, Users, Video, Zap, Play } from 'lucide-react'
 import Header from '../components/Header'
 import { getHeroName } from '../utils/heroes'
@@ -37,7 +37,7 @@ export default function Leaderboard() {
 
   useEffect(() => {
     setLoading(true)
-    axios.get('/api/leaderboard', { params: { demo: demoMode } })
+    api.get('/api/leaderboard', { params: { demo: demoMode } })
       .then(res => setData(res.data))
       .catch(err => console.error('Failed to fetch leaderboard', err))
       .finally(() => setLoading(false))

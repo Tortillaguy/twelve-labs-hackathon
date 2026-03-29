@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: dota-intel-api
+    runtime: python
+    rootDir: dota-intel
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: TWELVELABS_API_KEY
+        sync: false
+      - key: TWELVELABS_INDEX_ID
+        sync: false
+      - key: OPENDOTA_BASE_URL
+        value: https://api.opendota.com/api
+      - key: ESL_LEAGUE_NAME
+        value: ESL Pro Circuit
