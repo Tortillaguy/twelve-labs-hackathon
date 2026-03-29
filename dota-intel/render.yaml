@@ -8,8 +8,6 @@ services:
     envVars:
       - key: TWELVELABS_API_KEY
         sync: false
-      - key: TWELVELABS_INDEX_ID
-        sync: false
       - key: OPENDOTA_BASE_URL
         value: https://api.opendota.com/api
       - key: ESL_LEAGUE_NAME
