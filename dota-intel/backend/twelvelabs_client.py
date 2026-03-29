@@ -151,58 +151,26 @@ class TwelveLabsClient:
         query: str,
         options: list[str] = None,
         page_limit: int = 10,
+        retries: int = 5,
     ) -> list[dict]:
         """Search index for clips matching query. Returns list of clip dicts.
 
         Uses raw HTTP because the SDK's Pydantic models fail to deserialize
         the v1.3 search response (missing score/confidence fields).
+        Includes exponential backoff for 429 Rate Limit errors.
         """
-        opts = options or ["visual", "audio"]
-        fields = [
-            ("index_id", (None, self.index_id)),
-            ("query_text", (None, query)),
-            ("group_by", (None, "clip")),
-            ("page_limit", (None, str(page_limit))),
-        ]
-        for opt in opts:
-            fields.append(("search_options", (None, opt)))
-
-        r = httpx.post(
-            f"{self.BASE_URL}/search",
-            headers={"x-api-key": self._api_key},
-            files=fields,
-            timeout=30,
-        )
-        r.raise_for_status()
-        data = r.json().get("data", [])
-
-        clips = []
-        for item in data:
-            clips.append({
-                "video_id": item.get("video_id"),
-                "start": item.get("start"),
-                "end": item.get("end"),
-                "score": item.get("score"),
-                "transcription": item.get("transcription"),
-                "thumbnail_url": item.get("thumbnail_url"),
-            })
-        return clips
-
-    def calibrate_game_start(self, video_id: str, first_blood_time: int = 0) -> float:
-        """
-        Find the game start (0:00 mark) by locating First Blood and counting backwards,
-        or falling back to searching for the horn sound.
-        """
-        if first_blood_time > 0:
-            fields = [
-                ("index_id", (None, self.index_id)),
-                ("query_text", (None, "First blood announcement in Dota 2")),
-                ("search_options", (None, "visual")),
-                ("search_options", (None, "audio")),
-                ("group_by", (None, "clip")),
-                ("page_limit", (None, "5")),
-            ]
+        for i in range(retries):
             try:
+                opts = options or ["visual", "audio"]
+                fields = [
+                    ("index_id", (None, self.index_id)),
+                    ("query_text", (None, query)),
+                    ("group_by", (None, "clip")),
+                    ("page_limit", (None, str(page_limit))),
+                ]
+                for opt in opts:
+                    fields.append(("search_options", (None, opt)))
+
                 r = httpx.post(
                     f"{self.BASE_URL}/search",
                     headers={"x-api-key": self._api_key},
@@ -211,6 +179,38 @@ class TwelveLabsClient:
                 )
                 r.raise_for_status()
                 data = r.json().get("data", [])
+
+                clips = []
+                for item in data:
+                    clips.append({
+                        "video_id": item.get("video_id"),
+                        "start": item.get("start"),
+                        "end": item.get("end"),
+                        "score": item.get("score"),
+                        "transcription": item.get("transcription"),
+                        "thumbnail_url": item.get("thumbnail_url"),
+                    })
+                return clips
+            except httpx.HTTPStatusError as e:
+                if e.response.status_code == 429 and i < retries - 1:
+                    wait_time = 30 * (i + 1)
+                    print(f"[tl-search] 429 Rate Limited. Waiting {wait_time}s... (attempt {i+1}/{retries})")
+                    time.sleep(wait_time)
+                else:
+                    raise e
+        return []
+
+    def calibrate_game_start(self, video_id: str, first_blood_time: int = 0) -> float:
+        """
+        Find the game start (0:00 mark) by locating First Blood and counting backwards,
+        or falling back to searching for the horn sound.
+        """
+        if first_blood_time > 0:
+            try:
+                data = self.search_highlights(
+                    query="First blood announcement in Dota 2",
+                    page_limit=5
+                )
                 for item in data:
                     if item.get("video_id") == video_id:
                         # Found first blood. The horn is exactly first_blood_time seconds earlier.
@@ -222,22 +222,12 @@ class TwelveLabsClient:
             except Exception as e:
                 print(f"[tl] Warning in calibrate_game_start (First Blood): {e}")
 
-        fields = [
-            ("index_id", (None, self.index_id)),
-            ("query_text", (None, "Dota 2 game countdown horn creep spawn sound")),
-            ("search_options", (None, "audio")),
-            ("group_by", (None, "clip")),
-            ("page_limit", (None, "5")),
-        ]
         try:
-            r = httpx.post(
-                f"{self.BASE_URL}/search",
-                headers={"x-api-key": self._api_key},
-                files=fields,
-                timeout=30,
+            data = self.search_highlights(
+                query="Dota 2 game countdown horn creep spawn sound",
+                page_limit=5,
+                options=["audio"]
             )
-            r.raise_for_status()
-            data = r.json().get("data", [])
             for item in data:
                 if item.get("video_id") == video_id:
                     print(f"[tl] Found Horn sound at {item.get('start')}s.")

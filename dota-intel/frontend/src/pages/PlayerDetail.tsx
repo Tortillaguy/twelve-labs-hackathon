@@ -2,11 +2,12 @@ import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import api from '../utils/api'
 import Hls from 'hls.js'
-import { Sparkles, ArrowLeft, Mic2, Play, X, Video } from 'lucide-react'
+import { Sparkles, ArrowLeft, Mic2, Play, X, Video, Link2, Copy, Check } from 'lucide-react'
 import Header from '../components/Header'
 import { getHeroName } from '../utils/heroes'
 import HeroPortrait from '../components/HeroPortrait'
 import { useClipPlayer } from '../context/ClipPlayerContext'
+import { copyToClipboard } from '../utils/clipboard'
 
 /**
  * Seeks an offscreen HLS video to `seekTo` seconds and captures a canvas frame.
@@ -162,6 +163,7 @@ export default function PlayerDetail() {
   const [search, setSearch] = useState('')
   const [searchClips, setSearchClips] = useState<SearchClip[]>([])
   const [clipsLoading, setClipsLoading] = useState(false)
+  const [toast, setToast] = useState<string | null>(null)
   const { openClip } = useClipPlayer()
 
   useEffect(() => {
@@ -179,6 +181,43 @@ export default function PlayerDetail() {
       })
       .finally(() => setLoading(false))
   }, [accountId, demoMode])
+
+  // Deep-link Auto-Open logic
+  useEffect(() => {
+    const clipParam = searchParams.get('clip')
+    if (!clipParam || !data?.highlights?.length) return
+    const parts = clipParam.split(':')
+    if (parts.length < 3) return
+    const [videoId, startStr, endStr] = parts
+    const start = Number(startStr)
+    const end = Number(endStr)
+    if (isNaN(start) || isNaN(end)) return
+    
+    // Find matching highlight or discovery clip
+    const match = data.highlights.find(
+      hl => hl.video_id === videoId && hl.start === start && hl.end === end
+    )
+    
+    if (match?.hls_url) {
+      openClip({
+        hlsUrl: match.hls_url,
+        start: match.start,
+        end: match.end,
+        playerName: data.player.name,
+        hero: getHeroName(data.player.top_heroes[0]),
+        opponent: match.opponent,
+        matchId: match.match_id,
+        aiScore: match.excitement_score,
+        eventLabel: match.play_type,
+        transcription: match.transcription
+      })
+    }
+  }, [data, searchParams, openClip])
+
+  const showToast = (msg: string) => {
+    setToast(msg)
+    setTimeout(() => setToast(null), 2000)
+  }
 
   // Fetch AI-discovered clips for this player from TwelveLabs search
   useEffect(() => {
@@ -359,6 +398,9 @@ export default function PlayerDetail() {
                         eventLabel: hl.play_type,
                         transcription: hl.transcription
                       })}
+                      onCopy={showToast}
+                      accountId={accountId!}
+                      demoMode={demoMode}
                     />
                   ))}
                 </div>
@@ -395,6 +437,9 @@ export default function PlayerDetail() {
                         transcription: clip.transcription ?? undefined,
                         eventLabel: 'GLOBAL DISCOVERY'
                       })}
+                      onCopy={showToast}
+                      accountId={accountId!}
+                      demoMode={demoMode}
                     />
                   ))}
                 </div>
@@ -407,8 +452,29 @@ export default function PlayerDetail() {
           </div>
         </div>
       </main>
+
+      {/* Toast Notification */}
+      {toast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-2.5 rounded-lg bg-obsidian-dark border border-accent-ai/40 text-[13px] font-semibold text-[#E8E8F0] shadow-[0_0_20px_rgba(167,139,250,0.15)] animate-fade-in-up pointer-events-none">
+          <Check size={14} className="text-accent-ai" />
+          {toast}
+        </div>
+      )}
     </div>
   )
+}
+
+function buildClipUrl(
+  accountId: string,
+  videoId: string,
+  start: number,
+  end: number,
+  demoMode: boolean
+): string {
+  const base = `${window.location.origin}/players/${accountId}`
+  const params = new URLSearchParams({ clip: `${videoId}:${start}:${end}` })
+  if (demoMode) params.set('demo', 'true')
+  return `${base}?${params.toString()}`
 }
 
 function MiniStat({
@@ -459,7 +525,13 @@ function MatchCard({ match }: { match: MatchSummary }) {
 }
 
 
-function SearchClipCard({ clip, onPlay }: { clip: SearchClip; onPlay: () => void }) {
+function SearchClipCard({ clip, onPlay, onCopy, accountId, demoMode }: { 
+  clip: SearchClip; 
+  onPlay: () => void;
+  onCopy: (msg: string) => void;
+  accountId: string;
+  demoMode: boolean
+}) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [isVisible, setIsVisible] = useState(false)
 
@@ -516,15 +588,49 @@ function SearchClipCard({ clip, onPlay }: { clip: SearchClip; onPlay: () => void
             "{clip.transcription}"
           </div>
         )}
-        <span className="text-[10px] text-[#555568] block">
-          {formatTime(clip.start)} in VOD
-        </span>
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] text-[#555568] block">
+            {formatTime(clip.start)} in VOD
+          </span>
+          <div className="flex items-center gap-1.5 translate-y-0.5">
+            <button
+              onClick={async (e) => {
+                e.stopPropagation()
+                const url = buildClipUrl(accountId, clip.video_id, clip.start, clip.end, demoMode)
+                await copyToClipboard(url)
+                onCopy('Link copied!')
+              }}
+              className="w-6 h-6 flex items-center justify-center rounded border border-obsidian-border text-[#555568] hover:border-accent-ai/50 hover:text-accent-ai transition-all"
+              title="Copy deep link"
+            >
+              <Link2 size={13} />
+            </button>
+            <button
+              onClick={async (e) => {
+                e.stopPropagation()
+                const timeStr = `${formatTime(clip.start)} – ${formatTime(clip.end)}`
+                await copyToClipboard(timeStr)
+                onCopy(`Copied! ${timeStr}`)
+              }}
+              className="w-6 h-6 flex items-center justify-center rounded border border-obsidian-border text-[#555568] hover:border-accent-ai/50 hover:text-accent-ai transition-all"
+              title="Copy timestamp"
+            >
+              <Copy size={13} />
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   )
 }
 
-function HighlightCard({ highlight, onPlay }: { highlight: Highlight; onPlay?: () => void }) {
+function HighlightCard({ highlight, onPlay, onCopy, accountId, demoMode }: { 
+  highlight: Highlight; 
+  onPlay?: () => void;
+  onCopy: (msg: string) => void;
+  accountId: string;
+  demoMode: boolean
+}) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [isVisible, setIsVisible] = useState(false)
 
@@ -618,14 +724,42 @@ function HighlightCard({ highlight, onPlay }: { highlight: Highlight; onPlay?: (
           <span className="text-[10px] text-[#555568]">
             {formatTime(highlight.start)}  ·  vs {highlight.opponent ?? 'Unknown'}
           </span>
-          {highlight.excitement_score > 0 && (
-            <div className="flex items-center gap-1">
-              <Mic2 size={10} className="text-[#FFB800]" />
-              <span className="text-[10px] font-bold text-[#FFB800]">
-                {highlight.excitement_score.toFixed(1)}
-              </span>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 mr-1">
+              <button
+                onClick={async (e) => {
+                  e.stopPropagation()
+                  const url = buildClipUrl(accountId, highlight.video_id, highlight.start, highlight.end, demoMode)
+                  await copyToClipboard(url)
+                  onCopy('Link copied!')
+                }}
+                className="w-6 h-6 flex items-center justify-center rounded border border-obsidian-border text-[#555568] hover:border-accent-ai/50 hover:text-accent-ai transition-all"
+                title="Copy deep link"
+              >
+                <Link2 size={13} />
+              </button>
+              <button
+                onClick={async (e) => {
+                  e.stopPropagation()
+                  const timeStr = `${formatTime(highlight.start)} – ${formatTime(highlight.end)}`
+                  await copyToClipboard(timeStr)
+                  onCopy(`Copied! ${timeStr}`)
+                }}
+                className="w-6 h-6 flex items-center justify-center rounded border border-obsidian-border text-[#555568] hover:border-accent-ai/50 hover:text-accent-ai transition-all"
+                title="Copy timestamp"
+              >
+                <Copy size={13} />
+              </button>
             </div>
-          )}
+            {highlight.excitement_score > 0 && (
+              <div className="flex items-center gap-1">
+                <Mic2 size={10} className="text-[#FFB800]" />
+                <span className="text-[10px] font-bold text-[#FFB800]">
+                  {highlight.excitement_score.toFixed(1)}
+                </span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

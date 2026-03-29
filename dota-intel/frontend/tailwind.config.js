@@ -34,6 +34,15 @@ export default {
         mono: ['JetBrains Mono', 'monospace'],
         sans: ['Inter', 'sans-serif'],
       },
+      keyframes: {
+        'fade-in-up': {
+          '0%': { opacity: '0', transform: 'translate(-50%, 8px)' },
+          '100%': { opacity: '1', transform: 'translate(-50%, 0)' },
+        },
+      },
+      animation: {
+        'fade-in-up': 'fade-in-up 0.15s ease-out',
+      },
     },
   },
   plugins: [],

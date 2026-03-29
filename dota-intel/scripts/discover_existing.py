@@ -16,6 +16,7 @@ from backend.models import PlayerDetail, LeaderboardResponse, Highlight, MatchSu
 from backend import cache
 from backend.highlights import discover_event_anchored, merge_and_deduplicate
 from backend.scoring import aggregate_player_stats, rank_players
+import time
 
 def main():
     tl = TwelveLabsClient()

@@ -34,3 +34,21 @@ class OpenDotaClient:
 
     def fetch_player_profile(self, account_id: int) -> dict:
         return self._get(f"/players/{account_id}")
+
+    def get_player_name(self, account_id: int) -> str:
+        """
+        Fetches the player's name with fallback logic:
+        A: Professional name (registered pro tag).
+        B: Persona name (Steam nickname) as fallback.
+        """
+        try:
+            profile = self.fetch_player_profile(account_id)
+            p_obj = profile.get("profile", {})
+            # A: Try the 'name' (official pro tag)
+            pro_name = p_obj.get("name")
+            if pro_name:
+                return pro_name
+            # B: Fallback to 'personaname' (display name)
+            return p_obj.get("personaname", f"Player {account_id}")
+        except Exception:
+            return f"Player {account_id}"
