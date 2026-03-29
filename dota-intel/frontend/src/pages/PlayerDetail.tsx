@@ -6,6 +6,7 @@ import { Sparkles, ArrowLeft, Mic2, Play, X, Video } from 'lucide-react'
 import Header from '../components/Header'
 import { getHeroName } from '../utils/heroes'
 import HeroPortrait from '../components/HeroPortrait'
+import { useClipPlayer } from '../context/ClipPlayerContext'
 
 /**
  * Seeks an offscreen HLS video to `seekTo` seconds and captures a canvas frame.
@@ -160,7 +161,7 @@ export default function PlayerDetail() {
   const [search, setSearch] = useState('')
   const [searchClips, setSearchClips] = useState<SearchClip[]>([])
   const [clipsLoading, setClipsLoading] = useState(false)
-  const [activeClip, setActiveClip] = useState<{ hlsUrl: string; start: number; end: number } | null>(null)
+  const { openClip } = useClipPlayer()
 
   useEffect(() => {
     console.log(`[debug] Effect trigger: fetching /api/players/${accountId}`)
@@ -334,18 +335,6 @@ export default function PlayerDetail() {
                 </div>
               </div>
 
-              {/* Video Player */}
-              {activeClip && (
-                <div className="relative mb-4">
-                  <button
-                    onClick={() => setActiveClip(null)}
-                    className="absolute top-2 right-2 z-10 w-7 h-7 flex items-center justify-center rounded-full bg-black/70 hover:bg-black text-white transition-colors"
-                  >
-                    <X size={14} />
-                  </button>
-                  <HlsPlayer hlsUrl={activeClip.hlsUrl} startTime={activeClip.start} endTime={activeClip.end} />
-                </div>
-              )}
 
               {highlights.length === 0 ? (
                 <div className="bg-obsidian-dark border border-obsidian-border rounded-lg p-10 text-center text-sm text-[#555568]">
@@ -357,7 +346,18 @@ export default function PlayerDetail() {
                     <HighlightCard
                       key={i}
                       highlight={hl}
-                      onPlay={() => hl.hls_url && setActiveClip({ hlsUrl: hl.hls_url, start: hl.start, end: hl.end })}
+                      onPlay={() => hl.hls_url && openClip({
+                        hlsUrl: hl.hls_url,
+                        start: hl.start,
+                        end: hl.end,
+                        playerName: player.name,
+                        hero: getHeroName(player.top_heroes[0]),
+                        opponent: hl.opponent,
+                        matchId: hl.match_id,
+                        aiScore: hl.excitement_score,
+                        eventLabel: hl.play_type,
+                        transcription: hl.transcription
+                      })}
                     />
                   ))}
                 </div>
@@ -385,7 +385,15 @@ export default function PlayerDetail() {
                     <SearchClipCard
                       key={i}
                       clip={clip}
-                      onPlay={() => clip.hls_url && setActiveClip({ hlsUrl: clip.hls_url, start: clip.start, end: clip.end })}
+                      onPlay={() => clip.hls_url && openClip({
+                        hlsUrl: clip.hls_url,
+                        start: clip.start,
+                        end: clip.end,
+                        playerName: player.name,
+                        aiScore: clip.score ?? undefined,
+                        transcription: clip.transcription ?? undefined,
+                        eventLabel: 'GLOBAL DISCOVERY'
+                      })}
                     />
                   ))}
                 </div>
@@ -449,57 +457,6 @@ function MatchCard({ match }: { match: MatchSummary }) {
   )
 }
 
-function HlsPlayer({ hlsUrl, startTime, endTime }: { hlsUrl: string; startTime: number; endTime: number }) {
-  const videoRef = useRef<HTMLVideoElement>(null)
-
-  useEffect(() => {
-    const video = videoRef.current
-    if (!video) return
-
-    let hls: Hls | null = null
-
-    if (Hls.isSupported()) {
-      hls = new Hls({
-        startPosition: startTime,
-        maxBufferLength: 30,
-        maxMaxBufferLength: 60,
-      })
-      hls.loadSource(hlsUrl)
-      hls.attachMedia(video)
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        video.play()
-      })
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      // Safari native HLS
-      video.src = hlsUrl
-      video.addEventListener('loadedmetadata', () => {
-        video.currentTime = startTime
-        video.play()
-      })
-    }
-
-    // Auto-pause at end time
-    const handleTimeUpdate = () => {
-      if (video.currentTime >= endTime) {
-        video.pause()
-      }
-    }
-    video.addEventListener('timeupdate', handleTimeUpdate)
-
-    return () => {
-      video.removeEventListener('timeupdate', handleTimeUpdate)
-      if (hls) hls.destroy()
-    }
-  }, [hlsUrl, startTime, endTime])
-
-  return (
-    <video
-      ref={videoRef}
-      controls
-      className="w-full rounded-lg border border-obsidian-border"
-    />
-  )
-}
 
 function SearchClipCard({ clip, onPlay }: { clip: SearchClip; onPlay: () => void }) {
   const containerRef = useRef<HTMLDivElement>(null)
