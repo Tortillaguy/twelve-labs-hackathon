@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import axios from 'axios'
 import Hls from 'hls.js'
-import { Sparkles, ArrowLeft, Mic2, Play, X } from 'lucide-react'
+import { Sparkles, ArrowLeft, Mic2, Play, X, Video } from 'lucide-react'
 import Header from '../components/Header'
 import { getHeroName } from '../utils/heroes'
 
@@ -149,6 +149,8 @@ export default function PlayerDetail() {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const demoMode = searchParams.get('demo') === 'true'
+  
+  console.log(`[debug] Rendering PlayerDetail for ${accountId} (demo=${demoMode})`)
 
   const [data, setData] = useState<PlayerDetailData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -159,12 +161,16 @@ export default function PlayerDetail() {
   const [activeClip, setActiveClip] = useState<{ hlsUrl: string; start: number; end: number } | null>(null)
 
   useEffect(() => {
+    console.log(`[debug] Effect trigger: fetching /api/players/${accountId}`)
     setLoading(true)
     setError(null)
     axios.get(`/api/players/${accountId}`, { params: { demo: demoMode } })
-      .then(res => setData(res.data))
+      .then(res => {
+        console.log('[debug] Player data received:', res.data)
+        setData(res.data)
+      })
       .catch(err => {
-        console.error('Failed to fetch player', err)
+        console.error('[debug] API Error:', err)
         setError(err.response?.data?.detail || err.message || 'Failed to load player data')
       })
       .finally(() => setLoading(false))
@@ -225,8 +231,9 @@ export default function PlayerDetail() {
     )
   }
 
-  const { player, recent_matches, highlights } = data
-  const kdaParts = player.kda.split(' / ')
+  const { player, recent_matches = [], highlights = [] } = data
+  const kdaParts = (player?.kda || '0 / 0 / 0').split(' / ')
+  const topHeroes = player?.top_heroes || []
 
   return (
     <div className="min-h-screen bg-obsidian text-[#E8E8F0]">
@@ -251,11 +258,11 @@ export default function PlayerDetail() {
         <div className="bg-obsidian-dark border border-obsidian-border rounded-xl p-[22px_28px] flex items-center gap-7">
           <div className="w-[60px] h-[60px] rounded-full bg-accent-dota flex-shrink-0" />
           <div className="space-y-1.5">
-            <h1 className="text-[22px] font-bold">{player.name}</h1>
+            <h1 className="text-[22px] font-bold">{player?.name || 'Unknown Player'}</h1>
             <div className="flex items-center gap-2.5">
-              <span className="text-[13px] text-[#6B6B88]">{player.team}</span>
+              <span className="text-[13px] text-[#6B6B88]">{player?.team || 'No Team'}</span>
               <RoleBadge label="Carry" />
-              {player.top_heroes.slice(0, 3).map(id => (
+              {topHeroes.slice(0, 3).map(id => (
                 <HeroBadge key={id} label={getHeroName(id)} />
               ))}
             </div>
@@ -264,7 +271,7 @@ export default function PlayerDetail() {
           <div className="flex flex-col items-end gap-2">
             <div className="flex items-center h-[30px] px-3.5 rounded-sm bg-[#0D1620] border border-[#1E4080]">
               <span className="text-xs font-semibold text-[#60A5FA]">
-                Rank #{player.rank}  ·  ESL One Birmingham 2026
+                Rank #{player?.rank || '?'}  ·  ESL One Birmingham 2026
               </span>
             </div>
             <span className="text-xs text-[#555568]">
@@ -275,13 +282,13 @@ export default function PlayerDetail() {
 
         {/* Stats Row */}
         <div className="grid grid-cols-4 gap-3.5">
-          <MiniStat label="KDA RATIO" value={player.avg_kda_ratio.toFixed(2)} subtitle={`${kdaParts[0]} / ${kdaParts[1]} / ${kdaParts[2]} avg`} />
-          <MiniStat label="GOLD PER MIN" value={player.avg_gpm.toFixed(0)} subtitle="Top 3% of all carries" valueColor="text-accent-win" />
-          <MiniStat label="WIN RATE" value={`${(player.win_rate * 100).toFixed(0)}%`} subtitle={`${recent_matches.filter(m => m.won).length} wins from ${recent_matches.length} matches`} />
+          <MiniStat label="KDA RATIO" value={(player?.avg_kda_ratio || 0).toFixed(2)} subtitle={`${kdaParts[0]} / ${kdaParts[1]} / ${kdaParts[2]} avg`} />
+          <MiniStat label="GOLD PER MIN" value={(player?.avg_gpm || 0).toFixed(0)} subtitle="Top 3% of all carries" valueColor="text-accent-win" />
+          <MiniStat label="WIN RATE" value={`${((player?.win_rate || 0) * 100).toFixed(0)}%`} subtitle={`${recent_matches.filter(m => m.won).length} wins from ${recent_matches.length} matches`} />
           <MiniStat
             label="AI IMPACT SCORE ✦"
-            value={player.ai_impact_score.toFixed(1)}
-            subtitle={`Ranked #${player.rank} in competition`}
+            value={(player?.ai_impact_score || 0).toFixed(1)}
+            subtitle={`Ranked #${player?.rank || '?'} in competition`}
             labelColor="text-accent-ai"
             valueColor="text-accent-ai"
             borderColor="border-accent-ai"
