@@ -48,6 +48,7 @@ class Highlight(BaseModel):
     opponent: Optional[str] = None
     thumbnail_url: Optional[str] = None
     ai_insight: Optional[str] = None
+    surfaced_delta_seconds: Optional[int] = None
 
 class RankedPlayer(BaseModel):
     rank: int

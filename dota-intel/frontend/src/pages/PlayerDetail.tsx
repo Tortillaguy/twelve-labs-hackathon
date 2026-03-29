@@ -101,6 +101,7 @@ interface Highlight {
   hls_url?: string
   transcription?: string
   ai_insight?: string
+  surfaced_delta_seconds?: number
 }
 
 interface SearchClip {
@@ -593,6 +594,14 @@ function HighlightCard({ highlight, onPlay }: { highlight: Highlight; onPlay?: (
           <span className={`text-[8px] font-bold px-2 py-0.5 rounded-full ${colors.bg} ${colors.text}`}>
             {highlight.play_type}
           </span>
+          {highlight.surfaced_delta_seconds != null && (
+            <span
+              title={`Surfaced ${highlight.surfaced_delta_seconds}s after kill`}
+              className="text-[8px] font-bold px-2 py-0.5 rounded-full bg-[#0A1A0A] text-[#22C55E] border border-[#1A5C1A]/40 flex items-center gap-0.5 shrink-0"
+            >
+              ⚡ {highlight.surfaced_delta_seconds}s
+            </span>
+          )}
         </div>
         {highlight.ai_insight && (
           <div className="flex items-start gap-1.5 bg-[#1A0A33]/60 border border-[#3D2475]/50 rounded px-2 py-1.5">

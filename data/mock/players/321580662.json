@@ -37,7 +37,8 @@
       "player_name": "Yatoro",
       "match_id": 8748176080,
       "opponent": "Team Zero",
-      "ai_insight": "Yatoro turns a 1v4 high-ground defense into a full RAMPAGE, single-handedly swinging the game's momentum."
+      "ai_insight": "Yatoro turns a 1v4 high-ground defense into a full RAMPAGE, single-handedly swinging the game's momentum.",
+      "surfaced_delta_seconds": 5
     },
     {
       "video_id": "69c8c0587dd6415dd5bb5ccf",
@@ -49,7 +50,8 @@
       "player_name": "Yatoro",
       "match_id": 8748080084,
       "opponent": "Xtreme Gaming",
-      "ai_insight": "A precisely-timed Chronosphere traps three heroes, converting a losing skirmish into a decisive team wipe."
+      "ai_insight": "A precisely-timed Chronosphere traps three heroes, converting a losing skirmish into a decisive team wipe.",
+      "surfaced_delta_seconds": 8
     }
   ]
 }

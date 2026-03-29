@@ -1,4 +1,5 @@
 from backend.models import KillEvent, Highlight
+import time
 
 CLIP_PADDING_SECONDS = 20  # seconds before/after event to include in clip
 
@@ -45,7 +46,9 @@ def discover_event_anchored(
         start = max(0, vod_time - CLIP_PADDING_SECONDS)
         end = vod_time + CLIP_PADDING_SECONDS
 
+        analysis_start = time.time()
         analysis = tl_client.analyze_clip(video_id, start, end, target_player=player_name)
+        analysis_duration = int(time.time() - analysis_start)
         extracted_name = analysis.get("player_name")
         # Boost excitement if Pegasus confirmed this kill had a streak announcement
         streak_tier = analysis.get("streak_tier")  # e.g. "rampage"
@@ -70,6 +73,7 @@ def discover_event_anchored(
             match_id=match_id,
             opponent=opponent,
             ai_insight=analysis.get("ai_insight"),
+            surfaced_delta_seconds=analysis_duration,
         ))
     return highlights
 
@@ -134,9 +138,11 @@ def discover_discovery_first(
 
     highlights = []
     for clip in candidate_clips:
+        analysis_start = time.time()
         analysis = tl_client.analyze_clip(
             clip["video_id"], clip["start"], clip["end"], target_player=player_name
         )
+        analysis_duration = int(time.time() - analysis_start)
         extracted_name = analysis.get("player_name")
 
         # Post-filter: skip clips where Pegasus names a *different* player
@@ -166,6 +172,7 @@ def discover_discovery_first(
             match_id=match_id,
             opponent=opponent,
             ai_insight=analysis.get("ai_insight"),
+            surfaced_delta_seconds=analysis_duration,
         ))
     return highlights
 
