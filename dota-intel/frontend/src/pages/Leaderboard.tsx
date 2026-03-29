@@ -4,6 +4,7 @@ import api from '../utils/api'
 import { Swords, Users, Video, Zap, Play } from 'lucide-react'
 import Header from '../components/Header'
 import { getHeroName } from '../utils/heroes'
+import HeroPortrait from '../components/HeroPortrait'
 
 interface RankedPlayer {
   rank: number
@@ -141,8 +142,15 @@ export default function Leaderboard() {
                     <div className="text-[13px] font-semibold group-hover:text-accent-dota transition-colors">
                       {player.name}
                     </div>
-                    <div className="text-[11px] text-[#555568]">
-                      {player.team}  ·  {player.top_heroes.map(id => getHeroName(id)).join(', ')}
+                    <div className="flex items-center gap-2 flex-wrap mt-0.5">
+                      <span className="text-[11px] text-[#555568]">{player.team}</span>
+                      <span className="text-[11px] text-[#333345]">·</span>
+                      {player.top_heroes.slice(0, 3).map(id => (
+                        <span key={id} className="flex items-center gap-1">
+                          <HeroPortrait heroId={id} size="sm" />
+                          <span className="text-[11px] text-[#555568]">{getHeroName(id)}</span>
+                        </span>
+                      ))}
                     </div>
                   </div>
                 </div>

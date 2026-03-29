@@ -29,3 +29,43 @@ export const HERO_MAP: Record<number, string> = {
 export function getHeroName(id: number): string {
   return HERO_MAP[id] || `Hero ${id}`;
 }
+
+// CDN slug map — most are display-name-to-snake-case, overrides handle legacy internal names
+const SLUG_OVERRIDES: Record<number, string> = {
+  1:   'antimage',           // Anti-Mage → compressed
+  11:  'nevermore',          // Shadow Fiend legacy name
+  21:  'windrunner',         // Windranger legacy name
+  22:  'zuus',               // Zeus legacy name
+  39:  'queenofpain',        // no underscores
+  42:  'skeleton_king',      // Wraith King legacy name
+  51:  'rattletrap',         // Clockwerk legacy name
+  53:  'furion',             // Nature's Prophet legacy name
+  54:  'life_stealer',       // extra underscore
+  69:  'doom',               // Doom Bringer shortened
+  76:  'obsidian_destroyer', // Outworld Destroyer legacy name
+  90:  'keeper_of_the_light',
+  91:  'wisp',               // Io legacy name
+  108: 'abyssal_underlord',  // Underlord full internal name
+}
+
+function toSlug(name: string): string {
+  return name.toLowerCase().replace(/['']/g, '').replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '')
+}
+
+export const HERO_SLUG_MAP: Record<number, string> = Object.fromEntries(
+  Object.entries(HERO_MAP).map(([id, name]) => {
+    const numId = Number(id)
+    return [numId, SLUG_OVERRIDES[numId] ?? toSlug(name)]
+  })
+)
+
+export function getHeroSlug(id: number): string | null {
+  return HERO_SLUG_MAP[id] ?? null
+}
+
+export function getHeroImageUrl(id: number): string | null {
+  const slug = getHeroSlug(id)
+  return slug
+    ? `https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/${slug}.png`
+    : null
+}

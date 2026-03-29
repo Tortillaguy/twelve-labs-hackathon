@@ -5,6 +5,7 @@ import Hls from 'hls.js'
 import { Sparkles, ArrowLeft, Mic2, Play, X, Video } from 'lucide-react'
 import Header from '../components/Header'
 import { getHeroName } from '../utils/heroes'
+import HeroPortrait from '../components/HeroPortrait'
 
 /**
  * Seeks an offscreen HLS video to `seekTo` seconds and captures a canvas frame.
@@ -256,14 +257,18 @@ export default function PlayerDetail() {
 
         {/* Player Profile Card */}
         <div className="bg-obsidian-dark border border-obsidian-border rounded-xl p-[22px_28px] flex items-center gap-7">
-          <div className="w-[60px] h-[60px] rounded-full bg-accent-dota flex-shrink-0" />
+          {topHeroes[0] ? (
+            <HeroPortrait heroId={topHeroes[0]} size="lg" className="flex-shrink-0" />
+          ) : (
+            <div className="w-[60px] h-[60px] rounded-sm bg-accent-dota flex-shrink-0" />
+          )}
           <div className="space-y-1.5">
             <h1 className="text-[22px] font-bold">{player?.name || 'Unknown Player'}</h1>
             <div className="flex items-center gap-2.5">
               <span className="text-[13px] text-[#6B6B88]">{player?.team || 'No Team'}</span>
               <RoleBadge label="Carry" />
               {topHeroes.slice(0, 3).map(id => (
-                <HeroBadge key={id} label={getHeroName(id)} />
+                <HeroBadge key={id} heroId={id} label={getHeroName(id)} />
               ))}
             </div>
           </div>
@@ -428,7 +433,10 @@ function MatchCard({ match }: { match: MatchSummary }) {
             {match.kills} / {match.deaths} / {match.assists}
           </span>
           <span className="text-[11px] text-[#6B6B88]">{match.gpm} GPM</span>
-          <span className="text-[11px] text-accent-ai">{getHeroName(match.hero_id)}</span>
+          <span className="flex items-center gap-1">
+            <HeroPortrait heroId={match.hero_id} size="sm" />
+            <span className="text-[11px] text-accent-ai">{getHeroName(match.hero_id)}</span>
+          </span>
         </div>
       </div>
       {match.clip_count > 0 && (
@@ -657,9 +665,10 @@ function RoleBadge({ label }: { label: string }) {
   )
 }
 
-function HeroBadge({ label }: { label: string }) {
+function HeroBadge({ label, heroId }: { label: string; heroId?: number }) {
   return (
-    <div className="flex items-center h-[22px] px-2.5 rounded-full bg-[#1A1520] border border-[#3D2060]">
+    <div className="flex items-center gap-1.5 h-[22px] px-2 rounded-full bg-[#1A1520] border border-[#3D2060]">
+      {heroId !== undefined && <HeroPortrait heroId={heroId} size="sm" />}
       <span className="text-[11px] font-semibold text-accent-ai">{label}</span>
     </div>
   )
